@@ -1225,6 +1225,7 @@ def job_seeker_form_preview():
 
 
 from sqlalchemy.exc import IntegrityError
+
 @app.route('/edit_profile', methods=['POST'])
 def edit_profile():
     if 'email' in session:
@@ -1298,13 +1299,12 @@ def edit_profile():
                             birthday = None
                     user.birthday = birthday
 
-                # Handle passport expiry date
-
                 # Update applicant details
                 applicant_details = ApplicantDetails.query.filter_by(user_id=user.id).first()
                 if not applicant_details:
                     applicant_details = ApplicantDetails(user_id=user.id)
 
+                # Update applicant details fields
                 applicant_details.yearLastAttendedElem = request.form.get('yearLastAttendedElem')
                 applicant_details.levelElem = request.form.get('levelElem')
                 applicant_details.yearLastAttendedSec = request.form.get('yearLastAttendedSec')
@@ -1375,11 +1375,13 @@ def edit_profile():
                 is_undergraduate = request.form.get('undergraduate') == 'on'
                 applicant_details.undergraduate = is_undergraduate
 
+                # Commit the changes to the database
                 db.session.add(applicant_details)
                 db.session.commit()
 
                 flash('Profile updated successfully', 'success')
                 return redirect(url_for('user_profile'))
+
             except IntegrityError as e:
                 db.session.rollback()
                 flash(f'Database Integrity Error: {str(e)}', 'danger')
@@ -1394,8 +1396,7 @@ def edit_profile():
             flash('User not found', 'danger')
             return redirect('/login-signup')
     else:
-        flash('You need to log in first', 'warning')
-        return redirect('/login-signup')
+        flash('You must be logged in to edit your profile', 'danger')
 
 
 
