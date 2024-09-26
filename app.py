@@ -1053,23 +1053,28 @@ def is_profile_complete(user, employer, applicant_details):
         user.elemschool, user.yearGradElem, user.secondarySchool, user.yearGradSec,
         user.terSchool, user.courseTer, user.yearGradTer, user.gradSchool, user.courseGrad,
         user.yearGradGrad, user.skills, user.birthday, user.passportExp, user.disabilityothers, user.country, user.unemployedOthers,
-        user.howlongwork, user.workimme, user.otherskills, applicant_details.householdno, applicant_details.yearLastAttendedElem, applicant_details.yearLastAttendedSec, 
-        applicant_details.yearLastAttendedTer, applicant_details.yearLastAttendedGrad, applicant_details.levelElem, applicant_details.levelSec, applicant_details.levelTer,
-        applicant_details.levelGrad, applicant_details.localworklocation, applicant_details.osworklocation
+        user.howlongwork, user.workimme, user.otherskills
     ]
 
     # Add applicant details attributes if applicant_details is not None
     if applicant_details is not None:
         user_attributes.extend([
-            applicant_details.householdno, applicant_details.yearLastAttendedElem,
-            applicant_details.yearLastAttendedSec, applicant_details.yearLastAttendedTer,
-            applicant_details.yearLastAttendedGrad, applicant_details.levelElem,
-            applicant_details.levelSec, applicant_details.levelTer, applicant_details.levelGrad,
-            applicant_details.localworklocation, applicant_details.osworklocation
+            applicant_details.householdno, 
+            applicant_details.yearLastAttendedElem,
+            applicant_details.yearLastAttendedSec, 
+            applicant_details.yearLastAttendedTer,
+            applicant_details.yearLastAttendedGrad, 
+            applicant_details.levelElem,
+            applicant_details.levelSec, 
+            applicant_details.levelTer,
+            applicant_details.levelGrad, 
+            applicant_details.localworklocation, 
+            applicant_details.osworklocation
         ])
     
     # Check if all attributes are filled
     return all(attr is not None and attr != '' for attr in user_attributes)
+
 
 
 @app.route('/user_profile')
