@@ -1,0 +1,2579 @@
+{% extends 'header_base.html' %}
+
+{% block content %}
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="static/sweetalert2.min.css">
+<link rel="stylesheet" href="static/admin_assets/vendor/css/core.css" class="template-customizer-core-css" />
+<link rel="stylesheet" href="static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+<link rel="stylesheet" href="static/admin_assets/vendor/fonts/boxicons.css" />
+<link rel="stylesheet" href="static/admin_assets/vendor/fonts/boxicons.css" />
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="static/admin_assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="static/admin_assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="static/admin_assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="static/admin_assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <link rel="stylesheet" href="static/admin_assets/vendor/libs/apex-charts/apex-charts.css" />
+<script src="static/admin_assets/vendor/js/helpers.js"></script>
+<script src="static/admin_assets/js/config.js"></script>
+
+<!-- SweetAlert2 JS -->
+<script src="static/sweetalert2@11.js"></script>
+<style>
+    .highlight {
+        border: 2px solid red;
+        background-color: #ffe6e6;
+    }
+    
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Define all the fields that need checking
+        const fields = [
+            'firstname', 'middlename', 'lastname', 'suffix', 'address', 'gender',
+            'phone', 'civil_status', 'height', 'landline', 'houseNoStreet', 'brgy',
+            'city', 'province', 'religion', 'tinID', 'gsisNO', 'pagibigNo', 'philNo',
+            'disability', 'employmentType', 'employmentStatus', 'activeWork', 'willingToWork',
+            'porPs', 'prefoccupation', 'preflocation', 'salary', 'passportNo', 'elemschool',
+            'yearGradElem', 'secondarySchool', 'yearGradSec', 'terSchool', 'courseTer',
+            'yearGradTer', 'gradSchool', 'courseGrad', 'yearGradGrad', 'skills', 'birthday',
+            'passportExp', 'disabilityothers', 'country', 'unemployedOthers', 'howlongwork',
+            'workimme', 'otherskills'
+        ];
+    
+        // Iterate over each field and apply the highlight if it's None or empty
+        fields.forEach(function(field) {
+            let element = document.querySelector(`input[name="${field}"], textarea[name="${field}"]`);
+            
+            // Check if the element exists and if its value is "None" or empty
+            if (element && (element.value.trim() === "" || element.value.trim() === "None")) {
+                element.classList.add('highlight');
+            }
+        });
+    
+        // Handle applicant_details separately
+        const applicantDetailsFields = [
+            'householdno', 'yearLastAttendedElem', 'yearLastAttendedSec', 'yearLastAttendedTer', 'yearLastAttendedGrad',
+            'levelElem', 'levelSec', 'levelTer', 'levelGrad', 'localworklocation', 'osworklocation'
+        ];
+    
+        applicantDetailsFields.forEach(function(field) {
+            let element = document.querySelector(`input[name="${field}"], textarea[name="${field}"]`);
+            
+            if (element && (element.value.trim() === "" || element.value.trim() === "None")) {
+                element.classList.add('highlight');
+            }
+        });
+    });
+    
+</script>
+<style>
+    @keyframes blink {
+        0% {
+            background-color: #f0f8ff; /* Light pastel blue */
+        }
+        50% {
+            background-color: transparent; /* Transparent for the blink effect */
+        }
+        100% {
+            background-color: #f0f8ff; /* Back to light pastel blue */
+        }
+    }
+    
+    .highlight {
+        animation: blink 1.5s infinite; /* Slower, softer blink */
+        border: 1px solid #f6041833 !important; /* Soft teal border */
+    }
+    
+</style>
+
+
+<div class="container">
+    <div class="row gutters">
+        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-60">
+            <div class="card h-100">
+                <div class="card-body" style="border: 1px solid; border-radius: 10px;" >
+                    <div class="account-settings">
+                        <div class="user-profile">
+                            <div class="user-avatar" onclick="triggerFileInput()">
+                                {% if user.profile_pic %}
+                                
+                                    <img id="companyLogo" src="data:image/jpeg;base64,{{ user.profile_pic }}" style="height: 300px; width: 280px;" alt="User Profile">
+                                {% else %}
+                                    <img id="companyLogo" src="static/user.png" style="height: 290px; width: 270px;" alt="User Profile">
+                                {% endif %}
+                            </div>
+                            <form id="changeLogoForm" action="/change_profile" method="post" enctype="multipart/form-data">
+                                <input type="file" id="fileInput" name="profile_pic" style="display: none;" accept="image/*" onchange="uploadLogo()">
+                                <div class="mt-2"  style="padding-left: 50px;">
+                                    <label for="fileInput" style="padding-left: 40px;" class="genric-btn primary-border small">
+                                        <i class="fa fa-fw fa-camera"></i>
+                                        <span >Change Photo</span>
+                                    </label>
+                                </div>
+                                <button type="submit" style="display: none;">Submit</button>
+                            </form>
+                
+                            {% set fields = [
+                                user.firstname, user.middlename, user.lastname, user.suffix, user.address,
+                                user.gender, user.phone, user.civil_status, user.height, user.landline,
+                                user.houseNoStreet, user.brgy, user.city, user.province, user.religion,
+                                user.tinID, user.gsisNO, user.pagibigNo, user.philNo, user.disability,
+                                user.employmentType, user.employmentStatus, user.activeWork, user.willingToWork,
+                                user.porPs, user.prefoccupation, user.preflocation, user.salary, user.passportNo,
+                                user.elemschool, user.yearGradElem, user.secondarySchool, user.yearGradSec,
+                                user.terSchool, user.courseTer, user.yearGradTer, user.gradSchool, user.courseGrad,
+                                user.yearGradGrad, user.skills, user.birthday, user.passportExp, user.disabilityothers, user.country, user.unemployedOthers,
+                                user.howlongwork,user.workimme, user.otherskills, applicant_details.householdno, applicant_details.yearLastAttendedElem,
+                                applicant_details.yearLastAttendedSec, applicant_details.yearLastAttendedTer, applicant_details.yearLastAttendedGrad, applicant_details.levelElem,
+                                applicant_details.levelSec, applicant_details.levelTer, applicant_details.levelGrad, applicant_details.localworklocation, applicant_details.osworklocation
+                            ] %}
+                            {% set total_fields = fields | length %}
+                            {% set filled_fields = fields | select('ne', 'None') | select('ne', '') | select('ne', none) | list | length %}
+                            {% set completion_percentage = ((filled_fields / total_fields * 100) | round(0)) | int %}
+                            
+                            <div style="width: 100%; background-color: #;">
+                                <div style="width: {{ completion_percentage }}%; background-color: green; height: 20px; color: white; text-align: center; border-radius: 20px">
+                                   
+                                </div>
+                            </div> {{ completion_percentage }}% Profile Completed
+                            
+                            <a class="genric-btn primary" id="generateFormLink" href="/job_seeker_form_preview" target="_blank"
+                               style="display: block; text-align: center; margin-top: 10px; {{ 'pointer-events: none; opacity: 0.5;' if completion_percentage < 100 else '' }}">
+                                Generate Form
+                            </a>
+                            <span id="completionNotice" style="font-size: smaller; color: tomato; display: {{ 'block' if completion_percentage < 100 else 'none' }}; text-align: center; margin-top: 5px;">
+                                Complete profile first
+                            </span>
+   
+                            <a class="genric-btn primary" href="/resume_preview_applicant" target="_blank" style="display: block; text-align: center; margin-top: 10px;">
+                                Build Resume
+                            </a>
+                            {% if user.jobform %}
+                            {% if user.workStatus in ['Under Review', 'Approved'] %}
+                                <a class="genric-btn primary" style="display: block !important; text-align: center; margin-top: 10px; color: yellow; " >
+                                    Your application is {{ user.workStatus }}
+                                </a>
+                            {% else %}
+                                <a  class="genric-btn primary" style="display: block !important; text-align: center; margin-top: 10px; color: #ccc; " data-toggle="modal" data-target="#applyModal">
+                                    Resubmit new form
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a style="display: block !important; text-align: center; margin-top: 10px; color: white; transition: color 0.3s;" onmouseover="this.style.color='#1f2b7b'" onmouseout="this.style.color='white'" class="genric-btn primary" data-toggle="modal" data-target="#applyModal">
+                                Submit Job seeker form
+                            </a>
+                        {% endif %}
+                            <style>
+                                /* Optional: Ensure SweetAlert2 is on top of everything */
+                                .swal2-container {
+                                    z-index: 9999;
+                                }
+                            </style>
+                           
+                        </div>
+                        <div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="applyModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="applyModalLabel">Upload Job seeker form</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="uploadForm" action="/apply_peso" method="POST" enctype="multipart/form-data">
+                                            <div class="form-group"></div>
+                                            <div class="form-group">
+                                                <p>
+                                                    <span style="color: tomato; text-decoration: solid;">Note PDF: </span>Uploading the form will automatically submit the application to PESO. If you don't have a form yet, you can generate by clicking the Generate Form button</a>
+                                                </p>
+                                                <input type="file" class="form-control-file" id="fileInput" name="fileInput" accept=".pdf" required>
+                                            </div>
+                                            <!-- Hidden input field to include the company_id -->
+                                            <button type="submit" class="genric-btn primary float-right">Submit</button>
+                                        </form>
+                                    </div>
+                                  
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            document.getElementById('uploadForm').addEventListener('submit', function(event) {
+                                event.preventDefault();  // Prevent the default form submission
+                    
+                                var formData = new FormData(this);
+                    
+                                fetch('/apply_peso', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.error) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: data.error,
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success',
+                                            text: 'File uploaded successfully!',
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = '/user_profile';  // Redirect to user profile
+                                            }
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'There was an error uploading the file!',
+                                    });
+                                    console.error('There was an error!', error);
+                                });
+                            });
+                        </script>
+                        <script>
+
+                            function triggerFileInput() {
+                                document.getElementById('fileInput').click();
+                            }
+
+                            function uploadLogo() {
+                                document.getElementById('changeLogoForm').submit();
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12">
+<div class="card h-100">
+	<div class="card-body" style="border: 1px solid; border-radius: 10px;">
+        <form class="form-contact contact_form" action="/edit_profile" method="post" id="setupAccountForm" novalidate="novalidate">
+		<div class="row gutters">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="margin-bottom: 20px;">
+				<b style="font-size: 20px;" > User Profile </b>
+                <span style="font-size: smaller; color: tomato; margin-left: 10px;">Note: Input NA if not applicable</span>
+			</div>
+
+            <div style="border-top: 3px solid #ccc; margin-bottom: 9px;" class="col-12" >
+            </div>
+            <strong><label style="" for="">I. PERSONAL INFORMATION</label></strong>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="name">First name</label>
+                    <div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-user"></i></span>
+                    <input type="text" name="firstname" class="form-control {% if user.firstname is none or user.firstname == 'None' %}highlight{% endif %}" id="firstname" placeholder="{{ user.firstname }}" value="{{ user.firstname }}" required>
+                </div>
+            </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="name">Middle name</label>
+                    <div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-user"></i></span>
+                    <input type="text" name="middlename" class="form-control" id="middlename"  placeholder="{{ user.middlename}}"  value="{{ user.middlename }}" required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="name">Last name</label>
+                    <div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-user"></i></span>
+                    <input type="text" name="lastname" class="form-control" id="lastname" placeholder="{{ user.lastname }}" value="{{ user.lastname }}" required>
+                </div>
+            </div></div>
+            
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="name">Suffix</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-user"></i></span>
+                    <input type="text" name="suffix" class="form-control" id="suffix" placeholder="{{ user.suffix }}" value="{{ user.suffix }}" required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="birthday">Date of Birth</label>
+                    <div class="input-group date" id="datepicker">
+                        <input type="text" class="form-control" name="birthday" id="birthday" placeholder="{{ user.birthday }}" value="{{ user.birthday }}">
+                        <span class="input-group-append">
+                            <span class="input-group-text bg-white">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+         	
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="address">Place of birth</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-pin"></i></span>
+                    <input type="text" name="address"class="form-control" id="address" placeholder="{{ user.address }}" value="{{ user.address }}"  required>
+                </div>
+            </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="gender">Sex</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                           <i class='bx bx-male-sign' ></i></span>
+                    <select name="gender" style="border: 1px solid #ccc !important; display: block; width: 100%;" class="form-control" required>
+                        <option value=""selected disabled>Select Gender</option>
+                        <option value="Male" {% if user.gender == 'Male' %} selected {% endif %}>Male</option>
+                        <option value="Female" {% if user.gender == 'Female' %} selected {% endif %}>Female</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="religion">Religion</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-church"></i></span>
+                    <input type="text"  name="religion" class="form-control" id="religion" placeholder="{{ user.religion }}" value ="{{ user.religion }} " required>
+                </div>
+            </div>
+        </div>
+            
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="civil_status">Civil Status</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-home-circle"></i></span>
+                    <select name="civil_status" style="border: 1px solid #ccc !important; display: block; width: 100%;" class="form-control" required>
+                        <option value=""selected disabled>Select Civil Status</option>
+                        <option value="Single" {% if user.civil_status == 'Single' %} selected {% endif %}>Single</option>
+                        <option value="Married" {% if user.civil_status == 'Married' %} selected {% endif %}>Married</option>
+                        <option value="Widowed" {% if user.civil_status == 'Widowed' %} selected {% endif %}>Widowed</option>
+                        <option value="Separated" {% if user.civil_status == 'Separated' %} selected {% endif %}>Separated</option>
+                        <option value="Live-in" {% if user.civil_status == 'Live-in' %} selected {% endif %}>Live-in</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    
+                </div>
+            </div>
+
+            
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="houseNoStreet">House no. / Street Village</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-building-house"></i></span>
+                    <input type="text" name="houseNoStreet"class="form-control" id="houseNoStreet" placeholder="{{ user.houseNoStreet }}" value="{{ user.houseNoStreet }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="brgy">Barangay</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-building-house"></i></span>
+                    <input type="text" name="brgy"class="form-control" id="brgy" placeholder="{{ user.brgy }}" value="{{ user.brgy }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="city">City</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-building-house"></i></span>
+                    <input type="text" name="city"class="form-control" id="city" placeholder="{{ user.city }}" value="{{ user.city }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="province">Province</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-building-house"></i></span>
+                    <input type="text" name="province"class="form-control" id="province" placeholder="{{ user.province }}" value="{{ user.province }}"  required>
+                </div>
+            </div>
+        </div>
+
+        
+
+
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="height">Height</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-ruler"></i></span>
+                    <input type="text" name="height"class="form-control" id="height" placeholder="{{ user.height }}" value="{{ user.height }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="email">Email</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-envelope' ></i></span>
+                    <input type="email" disabled name="email"class="form-control" id="email" placeholder="{{ user.email }}" value="{{ user.email }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="phone">Cellphone No.</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-phone"></i></span>
+                    <input type="number" name="phone"class="form-control" id="phone" placeholder="{{ user.phone }}" value="{{ user.phone }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="landline">Landline No.</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class="bx bx-phone"></i></span>
+                    <input type="text" name="landline" class="form-control" id="landline" placeholder="{{ user.landline }}" value="{{ user.landline }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="tinID">TIN </label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-id-card'></i></span>
+                    <input type="text" name="tinID"class="form-control" id="tinID" placeholder="{{ user.tinID }}" value="{{ user.tinID }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="gsisNO">GSIS / SSS ID</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-id-card'></i></span>
+                    <input type="text" name="gsisNO"class="form-control" id="gsisNO" placeholder="{{ user.gsisNO }}" value="{{ user.gsisNO }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="pagibigNo">PAG IBIG No.</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-id-card'></i></span>
+                    <input type="text" name="pagibigNo"class="form-control" id="pagibigNo" placeholder="{{ user.pagibigNo }}" value="{{ user.pagibigNo }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    <label for="philNo">PhilHealth No.</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-id-card'></i></span>
+                    <input type="text" name="philNo"class="form-control" id="philNo" placeholder="{{ user.philNo }}" value="{{ user.philNo }}"  required>
+                </div>
+            </div>
+        </div>
+
+
+        <style>/* For disability others container */
+           /* For disability others container */
+#disability-others-container {
+    display: none;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#disability-others-container.show {
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+}
+
+#disability-others-container.pop {
+    transform: scale(1.05);
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+    animation: bounce 0.3s ease-out;
+}
+
+
+
+/* For employment containers */
+#country-container,
+#unemployedOthers-container {
+    display: none;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#country-container.show,
+#unemployedOthers-container.show {
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+}
+
+#country-container.pop,
+#unemployedOthers-container.pop {
+    transform: scale(1.05);
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+    animation: bounce 0.3s ease-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scale(1.05);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+
+#howlongwork-container {
+    display: none;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#howlongwork-container.show {
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+}
+
+#howlongwork-container.pop {
+    transform: scale(1.05);
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+    animation: bounce 0.3s ease-out;
+}
+#workimme-container {
+    display: none;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#workimme-container.show {
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+}
+
+#workimme-container.pop {
+    transform: scale(1.05);
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+    animation: bounce 0.3s ease-out;
+}
+
+#householdno-container {
+    display: none;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#householdno-container.show {
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+}
+
+#householdno-container.pop {
+    transform: scale(1.05);
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+    animation: bounce 0.3s ease-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scale(1.05);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+        </style>
+        
+    <!-- Disability Section -->
+<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+    <div class="form-group">
+        <label for="disability">Disability</label>
+        <div class="input-group input-group-merge">
+            <span id="basic-icon-default-phone2" class="input-group-text">
+                <i class='bx bx-handicap'></i>
+            </span>
+            <select name="disability" id="disability" style="border: 1px solid #ccc !important; display: block; width: 100%;" class="form-control" required onchange="toggleDisabilityOthers()">
+                <option value="" selected disabled>Select Disability</option>
+                <option value="NA" {% if user.disability == 'NA' %} selected {% endif %}>NA</option>
+                <option value="Visual" {% if user.disability == 'Visual' %} selected {% endif %}>Visual</option>
+                <option value="Hearing" {% if user.disability == 'Hearing' %} selected {% endif %}>Hearing</option>
+                <option value="Speech" {% if user.disability == 'Speech' %} selected {% endif %}>Speech</option>
+                <option value="Physical" {% if user.disability == 'Physical' %} selected {% endif %}>Physical</option>
+                <option value="Others" {% if user.disability == 'Others' %} selected {% endif %}>Others</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12" id="disability-others-container">
+    <div class="form-group">
+        <label for="disabilityothers">Others</label>
+        <div class="input-group input-group-merge">
+            <span id="basic-icon-default-phone2" class="input-group-text">
+                <i class='bx bx-book-open'></i>
+            </span>
+            <input type="text" name="disabilityothers" class="form-control" id="disabilityothers" placeholder="{{ user.disabilityothers }}" value="{{ user.disabilityothers }}">
+        </div>
+    </div>
+</div>
+
+<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+    <div class="form-group">
+        <label for="employmentStatus">Employment Status</label><div class="input-group input-group-merge">
+            <span id="basic-icon-default-phone2" class="input-group-text">
+                <i class='bx bx-briefcase' ></i></span>
+        <select name="employmentStatus" style="border: 1px solid #ccc !important; display: block; width: 100%;" class="form-control" required>
+            <option value=""selected disabled>Select Employment Status</option>
+            <option value="Employed" {% if user.employmentStatus == 'Employed' %} selected {% endif %}>Employed</option>
+            <option value="Unemployed" {% if user.employmentStatus == 'Unemployed' %} selected {% endif %}>Unemployed</option>
+        </select>
+    </div>
+</div>
+</div>
+
+<!-- Employment Type Section -->
+<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+    <div class="form-group">
+        <label for="employmentType">Employment Type</label>
+        <div class="input-group input-group-merge">
+            <span id="basic-icon-default-phone2" class="input-group-text">
+                <i class='bx bx-briefcase'></i>
+            </span>
+            <select name="employmentType" id="employmentType" style="border: 1px solid #ccc !important; display: block; width: 100%;" class="form-control" required onchange="toggleEmploymentInputs()">
+                <option value="" selected disabled>Select Employment Type</option>
+                <option class="highlight-option" value="" disabled>--- OPTION FOR EMPLOYED ---</option>
+                <option value="Wage Employed" {% if user.employmentType == 'Wage Employed' %} selected {% endif %}>Wage Employed</option>
+                <option value="Self Employed" {% if user.employmentType == 'Self Employed' %} selected {% endif %}>Self Employed</option>
+                <option class="highlight-option" value="" disabled>--- OPTION FOR UNEMPLOYED ---</option>
+                <option value="New Entrant/Fresh Graduate" {% if user.employmentType == 'New Entrant/Fresh Graduate' %} selected {% endif %}>New Entrant/Fresh Graduate</option>
+                <option value="Terminated/Laidoff(local)" {% if user.employmentType == 'Terminated/Laidoff(local)' %} selected {% endif %}>Terminated/Laidoff(local)</option>
+                <option value="Finished Contract" {% if user.employmentType == 'Finished Contract' %} selected {% endif %}>Finished Contract</option>
+                <option value="Resigned" {% if user.employmentType == 'Resigned' %} selected {% endif %}>Resigned</option>
+                <option value="Retired" {% if user.employmentType == 'Retired' %} selected {% endif %}>Retired</option>
+                <option value="Terminated/Laidoff(abroad)" {% if user.employmentType == 'Terminated/Laidoff(abroad)' %} selected {% endif %}>Terminated/Laidoff(abroad)</option>
+                <option value="Others" {% if user.employmentType == 'Others' %} selected {% endif %}>Others</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12" id="country-container">
+    <div class="form-group">
+        <label for="country">Specify Country</label>
+        <div class="input-group input-group-merge">
+            <span id="basic-icon-default-phone2" class="input-group-text">
+                <i class="bx bx-ruler"></i>
+            </span>
+            <input type="text" name="country" class="form-control" id="country" placeholder="{{ user.country }}" value="{{ user.country }}" required>
+        </div>
+    </div>
+</div>
+
+<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12" id="unemployedOthers-container">
+    <div class="form-group">
+        <label for="unemployedOthers">Others, Specify</label>
+        <div class="input-group input-group-merge">
+            <span id="basic-icon-default-phone2" class="input-group-text">
+                <i class="bx bx-ruler"></i>
+            </span>
+            <input type="text" name="unemployedOthers" class="form-control" id="unemployedOthers" placeholder="{{ user.unemployedOthers }}" value="{{ user.unemployedOthers }}" required>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDisabilityOthers() {
+        var disabilitySelect = document.getElementById('disability');
+        var othersContainer = document.getElementById('disability-others-container');
+        var disabilityOthersInput = document.getElementById('disabilityothers');
+    
+        if (disabilitySelect.value === 'Others') {
+            othersContainer.classList.add('show', 'pop');
+            disabilityOthersInput.required = true;
+    
+            setTimeout(function() {
+                othersContainer.classList.remove('pop');
+            }, 2000);
+        } else {
+            othersContainer.classList.remove('show', 'pop');
+            disabilityOthersInput.required = false;
+            disabilityOthersInput.value = 'NA';  // Set the value to 'NA'
+        }
+    }
+
+    
+    function toggleEmploymentInputs() {
+        var employmentTypeSelect = document.getElementById('employmentType');
+        var countryContainer = document.getElementById('country-container');
+        var unemployedOthersContainer = document.getElementById('unemployedOthers-container');
+        var countryInput = document.getElementById('country');
+        var unemployedOthersInput = document.getElementById('unemployedOthers');
+    
+        if (employmentTypeSelect.value === 'Terminated/Laidoff(abroad)') {
+            countryContainer.classList.add('show', 'pop');
+            countryInput.required = true;
+            unemployedOthersInput.value = 'NA';  // Set unemployedOthers to 'NA'
+            setTimeout(function() {
+                countryContainer.classList.remove('pop');
+            }, 2000);
+        } else if (employmentTypeSelect.value === 'Others') {
+            unemployedOthersContainer.classList.add('show', 'pop');
+            unemployedOthersInput.required = true;
+            countryInput.value = 'NA';  // Set country to 'NA'
+            setTimeout(function() {
+                unemployedOthersContainer.classList.remove('pop');
+            }, 2000);
+        } else {
+            countryContainer.classList.remove('show', 'pop');
+            unemployedOthersContainer.classList.remove('show', 'pop');
+            countryInput.required = false;
+            unemployedOthersInput.required = false;
+            countryInput.value = 'NA';  // Set the value to 'NA'
+            unemployedOthersInput.value = 'NA';  // Set the value to 'NA'
+        }
+    }
+    
+
+    
+
+    function toggleHowLongWork() {
+        var activeWorkSelect = document.getElementById('activeWork');
+        var howLongWorkContainer = document.getElementById('howlongwork-container');
+        var howLongWorkInput = document.getElementById('howlongwork');
+    
+        if (activeWorkSelect.value === 'Yes') {
+            howLongWorkContainer.classList.add('show', 'pop');
+            howLongWorkInput.required = true;
+            setTimeout(function() {
+                howLongWorkContainer.classList.remove('pop');
+            }, 2000);
+        } else {
+            howLongWorkContainer.classList.remove('show', 'pop');
+            howLongWorkInput.required = false;
+            howLongWorkInput.value = 'NA';  // Set the value to 'NA'
+        }
+    }
+    function toggleWorkImme() {
+        var willingToWorkSelect = document.getElementById('willingToWork');
+        var workImmeContainer = document.getElementById('workimme-container');
+        var workImmeInput = document.getElementById('workimme');
+    
+        if (willingToWorkSelect.value === 'No') {
+            workImmeContainer.classList.add('show', 'pop');
+            workImmeInput.required = true;
+            setTimeout(function() {
+                workImmeContainer.classList.remove('pop');
+            }, 2000);
+        } else {
+            workImmeContainer.classList.remove('show', 'pop');
+            workImmeInput.required = false;
+            workImmeInput.value = 'NA';  // Set the value to 'NA'
+        }
+    }
+
+    function toggleHouseholdNo() {
+        var porPsSelect = document.getElementById('porPs');
+        var householdNoContainer = document.getElementById('householdno-container');
+        var householdNoInput = document.getElementById('householdno');
+        
+        if (porPsSelect.value === 'Yes') {
+            householdNoContainer.classList.add('show', 'pop');
+            householdNoInput.required = true;
+            setTimeout(function() {
+                householdNoContainer.classList.remove('pop');
+            }, 2000);
+        } else {
+            householdNoContainer.classList.remove('show', 'pop');
+            householdNoInput.required = false;
+            householdNoInput.value = 'NA';  // Set the value to 'NA'
+        }
+    }    
+    
+    // Call the function on DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", function() {
+        toggleHouseholdNo();
+    });
+    
+
+    
+    
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        toggleWorkImme();
+    });
+    
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        toggleHowLongWork();
+    });
+    
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        toggleDisabilityOthers();
+        toggleEmploymentInputs();
+    });
+
+    
+</script>
+
+
+
+
+
+            <!--<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                    
+                </div>
+            </div> -->
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="activeWork">Are you actively looking for work?</label>
+                    <div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-question-mark'></i>
+                        </span>
+                        <select name="activeWork" id="activeWork" style="border: 1px solid #ccc !important; display: block; width: 100%;" class="form-control" required onchange="toggleHowLongWork()">
+                            <option value="" selected disabled>Select</option>
+                            <option value="Yes" {% if user.activeWork == 'Yes' %} selected {% endif %}>Yes</option>
+                            <option value="No" {% if user.activeWork == 'No' %} selected {% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="howlongwork-container">
+                <div class="form-group">
+                    <label for="howlongwork">How long have you been looking for work?</label>
+                    <div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-money'></i>
+                        </span>
+                        <input type="text" name="howlongwork" class="form-control" id="howlongwork" placeholder="{{ user.howlongwork }}" value="{{ user.howlongwork }}" required>
+                    </div>
+                </div>
+            </div>
+            
+
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="willingToWork">Willing to work immediately?</label>
+                    <div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-question-mark'></i>
+                        </span>
+                        <select name="willingToWork" id="willingToWork" style="border: 1px solid #ccc !important; display: block; width: 100%;" class="form-control" required onchange="toggleWorkImme()">
+                            <option value="" selected disabled>Select</option>
+                            <option value="Yes" {% if user.willingToWork == 'Yes' %} selected {% endif %}>Yes</option>
+                            <option value="No" {% if user.willingToWork == 'No' %} selected {% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="workimme-container">
+                <div class="form-group">
+                    <label for="workimme">If no, When?</label>
+                    <div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-briefcase-alt-2'></i>
+                        </span>
+                        <input type="text" name="workimme" class="form-control" id="workimme" placeholder="{{ user.workimme }}" value="{{ user.workimme }}" required>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="porPs">Are you a 4Ps beneficiary?</label>
+                    <div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-question-mark'></i>
+                        </span>
+                        <select name="porPs" id="porPs" class="form-control" required onchange="toggleHouseholdNo()">
+                            <option value="" selected disabled>Select</option>
+                            <option value="Yes" {% if user.porPs == 'Yes' %} selected {% endif %}>Yes</option>
+                            <option value="No" {% if user.porPs == 'No' %} selected {% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="householdno-container" class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="householdno">Household no.</label>
+                    <div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-briefcase-alt-2'></i>
+                        </span>
+                        <input type="text" name="householdno" id="householdno" class="form-control" placeholder="Enter household no." value="{{ applicant_details.householdno }}">
+                    </div>
+                </div>
+            </div>
+
+            
+            <div style="border-top: 3px solid #ccc; margin-top: 40px; margin-bottom: 9px;" class="col-12" >
+            </div>
+            <strong><label style="" for="">II. JOB PREFERENCE</label></strong>
+            
+            
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" style="padding-top: 10px;">
+                <div class="form-group">
+                    <label for="prefoccupation">Preferred Occupation</label> <span style="color:darkgoldenrod;">Comma Separated (Crew, Barista) Maximum of 4</span><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-briefcase-alt-2' ></i></span>
+                    <input type="text" name="prefoccupation" class="form-control" id="prefoccupation" placeholder="{{ user.prefoccupation }}" value="{{ user.prefoccupation }}"  required>
+                </div>
+            </div>
+        </div>
+        <style>
+            #localworklocation-container,
+#osworklocation-container {
+    display: none;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#localworklocation-container.show,
+#osworklocation-container.show {
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+}
+
+#localworklocation-container.pop,
+#osworklocation-container.pop {
+    transform: scale(1.05);
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+    animation: bounce 0.3s ease-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scale(1.05);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+        </style>
+        
+
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+            <div class="form-group">
+                <label for="preflocation">Preferred Work Location</label>
+                <div class="input-group input-group-merge">
+                    <span id="basic-icon-default-phone2" class="input-group-text">
+                        <i class='bx bx-pin'></i>
+                    </span>
+                    <select name="preflocation" id="preflocation" class="form-control" required onchange="toggleWorkLocationInputs()">
+                        <option value="" disabled>Select</option>
+                        <option value="Local,specify cities/municipalities" {% if user.preflocation == 'Local,specify cities/municipalities' %} selected {% endif %}>Local,specify cities/municipalities</option>
+                        <option value="Overseas,specify countries" {% if user.preflocation == 'Overseas,specify countries' %} selected {% endif %}>Overseas,specify countries</option>
+                    </select>
+                </div> 
+            </div>
+        </div>
+        
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" id="localworklocation-container">
+            <div class="form-group">
+                <label for="localworklocation">Preferred Local Work Location</label>
+                <span style="color:darkgoldenrod;">Comma Separated (Maximum of 3)</span>
+                <div class="input-group input-group-merge">
+                    <span id="basic-icon-default-phone2" class="input-group-text">
+                        <i class='bx bx-briefcase-alt-2'></i>
+                    </span>
+                    <input type="text" name="localworklocation" class="form-control" id="localworklocation" placeholder="{{ applicant_details.localworklocation }}" value="{{ applicant_details.localworklocation }}" required>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12" id="osworklocation-container">
+            <div class="form-group">
+                <label for="osworklocation">Preferred Overseas Work Location</label>
+                <span style="color:darkgoldenrod;">Comma Separated (Maximum of 3)</span>
+                <div class="input-group input-group-merge">
+                    <span id="basic-icon-default-phone2" class="input-group-text">
+                        <i class='bx bx-briefcase-alt-2'></i>
+                    </span>
+                    <input type="text" name="osworklocation" class="form-control" id="osworklocation" placeholder="{{ applicant_details.osworklocation }}" value="{{ applicant_details.osworklocation }}" required>
+                </div>
+            </div>
+        </div>
+        
+
+        
+
+        <script>
+            function toggleWorkLocationInputs() {
+                var preflocationSelect = document.getElementById('preflocation');
+                var localContainer = document.getElementById('localworklocation-container');
+                var osContainer = document.getElementById('osworklocation-container');
+                var localInput = document.getElementById('localworklocation');
+                var osInput = document.getElementById('osworklocation');
+            
+                if (preflocationSelect.value === 'Local,specify cities/municipalities') {
+                    localContainer.classList.add('show', 'pop');
+                    osContainer.classList.remove('show', 'pop');
+                    osInput.value = 'NA';  // Set osworklocation to 'NA'
+                    setTimeout(function() {
+                        localContainer.classList.remove('pop');
+                    }, 2000);
+                } else if (preflocationSelect.value === 'Overseas,specify countries') {
+                    osContainer.classList.add('show', 'pop');
+                    localContainer.classList.remove('show', 'pop');
+                    localInput.value = 'NA';  // Set localworklocation to 'NA'
+                    setTimeout(function() {
+                        osContainer.classList.remove('pop');
+                    }, 2000);
+                } else {
+                    localContainer.classList.remove('show', 'pop');
+                    osContainer.classList.remove('show', 'pop');
+                    localInput.value = 'NA';  // Set localworklocation to 'NA'
+                    osInput.value = 'NA';  // Set osworklocation to 'NA'
+                }
+            }
+            
+            // Initialize on page load
+            document.addEventListener("DOMContentLoaded", function() {
+                toggleWorkLocationInputs();
+            });
+            
+            // Add event listener to dropdown
+            document.getElementById('preflocation').addEventListener('change', toggleWorkLocationInputs);
+            
+        </script>
+        
+        
+        
+        
+
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="salary">Expected Salary</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-money'></i></span>
+                    <input type="number" name="salary"class="form-control" id="salary" placeholder="{{ user.salary }}" value="{{ user.salary }}"  required>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="passportNo">Passport No.</label><div class="input-group input-group-merge">
+                        <span id="basic-icon-default-phone2" class="input-group-text">
+                            <i class='bx bx-book-bookmark'></i></span>
+                    <input type="text" name="passportNo"class="form-control" id="passportNo" placeholder="{{ user.passportNo }}" value="{{ user.passportNo }}"  required>
+                </div>
+            </div>
+        </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                <div class="form-group">
+                    <label for="passportExp">Passport Expiry Date</label><div class="input-group input-group-merge">
+                    <span id="basic-icon-default-phone2" class="input-group-text">
+                        <i class='bx bx-calendar'></i></span>
+                        <input type="text" class="form-control" name="passportExp" id="passportExp" placeholder="{{ user.passportExp }}" value="{{ user.passportExp }}" required>
+                </div>
+            </div>
+        </div>
+
+
+            <div style="border-top: 3px solid #ccc; margin-top: 30px; margin-bottom: 9px;" class="col-12" >
+            </div>
+            <strong><label style="margin-bottom: 20px;" for="">III. LANGUAGE / DIALECT PROFICIENCY </label></strong>
+
+            <!-- Language Checkboxes -->
+            <!-- English Language Section -->
+            <div class="col-xl-3 col-lg-3 col-md-2 col-sm-6">
+                <div class="form-group">
+                    <strong><label for="readeng">English -</label></strong>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <input type="checkbox" class="language-checkbox" id="readeng" name="readeng" value="Read" {% if applicant_details.readeng == "1" or applicant_details.readeng == "Read" %} checked {% endif %}>
+                    <label for="readeng">Read</label>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <input type="checkbox" class="language-checkbox" id="writeeng" name="writeeng" value="Write" {% if applicant_details.writeeng == "1" or applicant_details.writeeng == "Write" %} checked {% endif %}>
+                    <label for="writeeng">Write</label>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <input type="checkbox" class="language-checkbox" id="speakeng" name="speakeng" value="Speak" {% if applicant_details.speakeng == "1" or applicant_details.speakeng == "Speak" %} checked {% endif %}>
+                    <label for="speakeng">Speak</label>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <input type="checkbox" class="language-checkbox" id="understandeng" name="understandeng" value="Understand" {% if applicant_details.understandeng == "1" or applicant_details.understandeng == "Understand" %} checked {% endif %}>
+                    <label for="understandeng">Understand</label>
+                </div>
+            </div>
+
+            <!-- Filipino Language Section -->
+            <div class="col-xl-3 col-lg-3 col-md-2 col-sm-6">
+                <div class="form-group">
+                    <strong><label for="readfil">Filipino -</label></strong>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <input type="checkbox" class="language-checkbox" id="readfil" name="readfil" value="Read" {% if applicant_details.readfil == "1" or applicant_details.readfil == "Read" %} checked {% endif %}>
+                    <label for="readfil">Read</label>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <input type="checkbox" class="language-checkbox" id="writefil" name="writefil" value="Write" {% if applicant_details.writefil == "1" or applicant_details.writefil == "Write" %} checked {% endif %}>
+                    <label for="writefil">Write</label>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <input type="checkbox" class="language-checkbox" id="speakfil" name="speakfil" value="Speak" {% if applicant_details.speakfil == "1" or applicant_details.speakfil == "Speak" %} checked {% endif %}>
+                    <label for="speakfil">Speak</label>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <input type="checkbox" class="language-checkbox" id="understandfil" name="understandfil" value="Understand" {% if applicant_details.understandfil == "1" or applicant_details.understandfil == "Understand" %} checked {% endif %}>
+                    <label for="understandfil">Understand</label>
+                </div>
+            </div>
+
+            <!-- JavaScript to Set Unchecked Language Checkboxes to "NA" -->
+            <script>
+                // Event listener on page load to prepare handling of checkboxes
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Select only checkboxes with the class 'language-checkbox'
+                    const checkboxes = document.querySelectorAll('.language-checkbox');
+
+                    // Add event listener to each checkbox for changes (e.g., form submissions, button clicks)
+                    checkboxes.forEach(function (checkbox) {
+                        checkbox.addEventListener('change', function () {
+                            // Set a hidden input to 'NA' if the checkbox is unchecked when processing data
+                            if (!checkbox.checked) {
+                                // Create a hidden input to simulate setting the unchecked value to 'NA'
+                                const hiddenInput = document.createElement('input');
+                                hiddenInput.type = 'hidden';
+                                hiddenInput.name = checkbox.name;
+                                hiddenInput.value = 'NA';
+                                checkbox.parentNode.appendChild(hiddenInput);
+                            }
+                        });
+                    });
+                });
+            </script>
+
+
+
+
+
+            <div style="border-top: 3px solid #ccc; margin-top: 30px; margin-bottom: 9px;" class="col-12" >
+            </div>
+            <strong><label style="margin-bottom: 20px;" for="">IV. EDUCATIONAL BACKGROUND </label></strong>
+            
+            <div class="col-12">
+                <div class="form-group">
+                    <input type="checkbox" id="undergraduate" name="undergraduate" {% if applicant_details.undergraduate == "1" %} checked {% endif %}>
+                    <label for="undergraduate">Undergraduate?</label>
+                </div>
+            </div>
+            
+            
+            <!-- Row for Hidden fields -->
+            <div id="last-attended-fields" class="row" style="display:none;">
+                <!-- Elementary -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="yearLastAttendedElem">Year Last Attended (Elementary)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text">
+                                <i class="bx bx-calendar"></i>
+                            </span>
+                            <input type="text" name="yearLastAttendedElem" class="form-control" id="yearLastAttendedElem" placeholder="{{ applicant_details.yearLastAttendedElem or 'Enter year last attended for elementary' }}" value="{{ applicant_details.yearLastAttendedElem }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="levelElem">What Level? (Elementary)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text">
+                                <i class="bx bx-book"></i>
+                            </span>
+                            <input type="text" name="levelElem" class="form-control" id="levelElem" placeholder="{{ applicant_details.levelElem or 'Enter level for elementary' }}" value="{{ applicant_details.levelElem }}">
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Secondary -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="yearLastAttendedSec">Year Last Attended (Secondary)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text">
+                                <i class="bx bx-calendar"></i>
+                            </span>
+                            <input type="text" name="yearLastAttendedSec" class="form-control" id="yearLastAttendedSec" placeholder="{{ applicant_details.yearLastAttendedSec or 'Enter year last attended for secondary' }}" value="{{ applicant_details.yearLastAttendedSec }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="levelSec">What Level? (Secondary)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text">
+                                <i class="bx bx-book"></i>
+                            </span>
+                            <input type="text" name="levelSec" class="form-control" id="levelSec" placeholder="{{ applicant_details.levelSec or 'Enter level for secondary' }}" value="{{ applicant_details.levelSec }}">
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Tertiary -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="yearLastAttendedTer">Year Last Attended (Tertiary)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text">
+                                <i class="bx bx-calendar"></i>
+                            </span>
+                            <input type="text" name="yearLastAttendedTer" class="form-control" id="yearLastAttendedTer" placeholder="{{ applicant_details.yearLastAttendedTer or 'Enter year last attended for tertiary' }}" value="{{ applicant_details.yearLastAttendedTer }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="levelTer">What Level? (Tertiary)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text">
+                                <i class="bx bx-book"></i>
+                            </span>
+                            <input type="text" name="levelTer" class="form-control" id="levelTer" placeholder="{{ applicant_details.levelTer or 'Enter level for tertiary' }}" value="{{ applicant_details.levelTer }}">
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Graduate -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="yearLastAttendedGrad">Year Last Attended (Graduate)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text">
+                                <i class="bx bx-calendar"></i>
+                            </span>
+                            <input type="text" name="yearLastAttendedGrad" class="form-control" id="yearLastAttendedGrad" placeholder="{{ applicant_details.yearLastAttendedGrad or 'Enter year last attended for graduate' }}" value="{{ applicant_details.yearLastAttendedGrad }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="levelGrad">What Level? (Graduate)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text">
+                                <i class="bx bx-book"></i>
+                            </span>
+                            <input type="text" name="levelGrad" class="form-control" id="levelGrad" placeholder="{{ applicant_details.levelGrad or 'Enter level for graduate' }}" value="{{ applicant_details.levelGrad }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+
+            <div id="educationFields" class="row">
+                <!-- Elementary School -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="elemschool">Elementary School</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-school'></i></span>
+                            <input type="text" name="elemschool" class="form-control" id="elemschool" placeholder="{{ user.elemschool }}" value="{{ user.elemschool }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Year Graduated Elementary -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="yearGradElem">Year Graduated</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="yearGradElem" class="form-control" id="yearGradElem" placeholder="{{ user.yearGradElem }}" value="{{ user.yearGradElem }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Secondary School -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="secondarySchool">Secondary Education School</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-school'></i></span>
+                            <input type="text" name="secondarySchool" class="form-control" id="secondarySchool" placeholder="{{ user.secondarySchool }}" value="{{ user.secondarySchool }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Year Graduated Secondary -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="yearGradSec">Year Graduated</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="yearGradSec" class="form-control" id="yearGradSec" placeholder="{{ user.yearGradSec }}" value="{{ user.yearGradSec }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Tertiary School -->
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="terSchool">Tertiary School</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-school'></i></span>
+                            <input type="text" name="terSchool" class="form-control" id="terSchool" placeholder="{{ user.terSchool }}" value="{{ user.terSchool }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Course for Tertiary -->
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="courseTer">Course</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bx-book-open'></i></span>
+                            <input type="text" name="courseTer" class="form-control" id="courseTer" placeholder="{{ user.courseTer }}" value="{{ user.courseTer }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Year Graduated Tertiary -->
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="yearGradTer">Year Graduated</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="yearGradTer" class="form-control" id="yearGradTer" placeholder="{{ user.yearGradTer }}" value="{{ user.yearGradTer }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Graduate Studies -->
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="gradSchool">Graduate Studies</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-school'></i></span>
+                            <input type="text" name="gradSchool" class="form-control" id="gradSchool" placeholder="{{ user.gradSchool }}" value="{{ user.gradSchool }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Course for Graduate Studies -->
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="courseGrad">Course</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bx-book-open'></i></span>
+                            <input type="text" name="courseGrad" class="form-control" id="courseGrad" placeholder="{{ user.courseGrad }}" value="{{ user.courseGrad }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Year Graduated Graduate Studies -->
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="yearGradGrad">Year Graduated</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="yearGradGrad" class="form-control" id="yearGradGrad" placeholder="{{ user.yearGradGrad }}" value="{{ user.yearGradGrad }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="border-top: 3px solid #ccc; margin-top: 30px; margin-bottom: 9px;" class="col-12" >
+            </div>
+            <strong><label style="margin-bottom: 20px;" for="">V. TECHNICAL/VOCATIONAL AND OTHER TRAINING (Include courses takens as part of college education) </label></strong>
+            <div class="row">
+                <!-- First Row of Fields -->
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="techvoc1">TRAINING/VOCATIONAL COURSE</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="techvoc1" class="form-control" id="techvoc1" placeholder="TRAINING/VOCATIONAL COURSE"
+                                value="{{ applicant_details.techvoc1 if applicant_details.techvoc1 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="duration1">Duration </label> <SPAN style="font-size: 10px;"> (mm/dd/yyyy to mm/dd/yyyy)</SPAN>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="duration1" class="form-control" id="duration1" placeholder="Duration"
+                                value="{{ applicant_details.duration1 if applicant_details.duration1 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="tinstitution1">Training Institution</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="tinstitution1" class="form-control" id="tinstitution1" placeholder="Training Institution"
+                                value="{{ applicant_details.tinstitution1 if applicant_details.tinstitution1 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="certificate1">Certificates Received</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="certificate1" class="form-control" id="certificate1" placeholder="Certificates Received"
+                                value="{{ applicant_details.certificate1 if applicant_details.certificate1 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Second Row of Fields -->
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="techvoc2">TRAINING/VOCATIONAL COURSE</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="techvoc2" class="form-control" id="techvoc2" placeholder="TRAINING/VOCATIONAL COURSE"
+                                value="{{ applicant_details.techvoc2 if applicant_details.techvoc2 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="duration2">Duration</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="duration2" class="form-control" id="duration2" placeholder="Duration"
+                                value="{{ applicant_details.duration2 if applicant_details.duration2 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="tinstitution2">Training Institution</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="tinstitution2" class="form-control" id="tinstitution2" placeholder="Training Institution"
+                                value="{{ applicant_details.tinstitution2 if applicant_details.tinstitution2 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="certificate2">Certificates Received</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="certificate2" class="form-control" id="certificate2" placeholder="Certificates Received"
+                                value="{{ applicant_details.certificate2 if applicant_details.certificate2 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Third Row of Fields -->
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="techvoc3">TRAINING/VOCATIONAL COURSE</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="techvoc3" class="form-control" id="techvoc3" placeholder="TRAINING/VOCATIONAL COURSE"
+                                value="{{ applicant_details.techvoc3 if applicant_details.techvoc3 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="duration3">Duration</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="duration3" class="form-control" id="duration3" placeholder="Duration"
+                                value="{{ applicant_details.duration3 if applicant_details.duration3 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="tinstitution3">Training Institution</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="tinstitution3" class="form-control" id="tinstitution3" placeholder="Training Institution"
+                                value="{{ applicant_details.tinstitution3 if applicant_details.tinstitution3 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-10">
+                    <div class="form-group">
+                        <label for="certificate3">Certificates Received</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="certificate3" class="form-control" id="certificate3" placeholder="Certificates Received"
+                                value="{{ applicant_details.certificate3 if applicant_details.certificate3 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="border-top: 3px solid #ccc; margin-top: 30px; margin-bottom: 9px;" class="col-12" >
+            </div>
+            <strong><label style="margin-bottom: 20px;" for="">VI. ELIGIBILITY/ PROFESSIONAL LICENSE</label></strong>
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-9">
+                    <div class="form-group">
+                        <label for="eligibility1">ELIGIBILITY (Civil Service)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="eligibility1" class="form-control" id="eligibility1" placeholder="ELIGIBILITY (Civil Service)"
+                                value="{{ applicant_details.eligibility1 if applicant_details.eligibility1 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4">
+                    <div class="form-group">
+                        <label for="rating1">Rating</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="rating1" class="form-control" id="rating1" placeholder="Rating"
+                                value="{{ applicant_details.rating1 if applicant_details.rating1 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4">
+                    <div class="form-group">
+                        <label for="dateofexam1">Date of examination</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="dateofexam1" class="form-control" id="dateofexam1" placeholder="Date of examination"
+                                value="{{ applicant_details.dateofexam1 if applicant_details.dateofexam1 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-9">
+                    <div class="form-group">
+                        <label for="prc1">PROFESSIONAL LICENSE (PRC)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="prc1" class="form-control" id="prc1" placeholder="PROFESSIONAL LICENSE (PRC)"
+                                value="{{ applicant_details.prc1 if applicant_details.prc1 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4">
+                    <div class="form-group">
+                        <label for="validuntil1">Valid Until</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="validuntil1" class="form-control" id="validuntil1" placeholder="Valid Until"
+                                value="{{ applicant_details.validuntil1 if applicant_details.validuntil1 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-9">
+                    <div class="form-group">
+                        <label for="eligibility2">ELIGIBILITY (Civil Service)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="eligibility2" class="form-control" id="eligibility2" placeholder="ELIGIBILITY (Civil Service)"
+                                value="{{ applicant_details.eligibility2 if applicant_details.eligibility2 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4">
+                    <div class="form-group">
+                        <label for="rating2">Rating</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="rating2" class="form-control" id="rating2" placeholder="Rating"
+                                value="{{ applicant_details.rating2 if applicant_details.rating2 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4">
+                    <div class="form-group">
+                        <label for="dateofexam2">Date of examination</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="dateofexam2" class="form-control" id="dateofexam2" placeholder="Date of examination"
+                                value="{{ applicant_details.dateofexam2 if applicant_details.dateofexam2 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-9">
+                    <div class="form-group">
+                        <label for="prc2">PROFESSIONAL LICENSE (PRC)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="prc2" class="form-control" id="prc2" placeholder="PROFESSIONAL LICENSE (PRC)"
+                                value="{{ applicant_details.prc2 if applicant_details.prc2 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4">
+                    <div class="form-group">
+                        <label for="validuntil2">Valid Until</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class='bx bxs-graduation'></i></span>
+                            <input type="text" name="validuntil2" class="form-control" id="validuntil2" placeholder="Valid Until"
+                                value="{{ applicant_details.validuntil2 if applicant_details.validuntil2 else 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+
+            <script>
+                function updateFieldsVisibility() {
+                    const educationFields = document.getElementById('educationFields');
+                    const lastAttendedFields = document.getElementById('last-attended-fields');
+                    const checkbox = document.getElementById('undergraduate');
+                    const isChecked = checkbox.checked;
+            
+                    if (isChecked) {
+                        // Show last attended fields and hide education fields
+                        lastAttendedFields.style.display = 'flex';
+                        educationFields.style.display = 'none';
+                        
+                        // Set all inputs in educationFields to "NA" when hidden
+                        document.querySelectorAll('#educationFields input').forEach(function (input) {
+                            if (input.getAttribute('data-original-value') === null) {
+                                // Save the original value if it hasn't been saved yet
+                                input.setAttribute('data-original-value', input.value);
+                            }
+                            input.value = 'NA'; // Set value to "NA"
+                        });
+            
+                        // Ensure original values are retained when showing last attended fields
+                        document.querySelectorAll('#last-attended-fields input').forEach(function (input) {
+                            if (input.getAttribute('data-original-value') === null) {
+                                // Save the original value if it hasn't been saved yet
+                                input.setAttribute('data-original-value', input.value);
+                            }
+                        });
+                    } else {
+                        // Show education fields and hide last attended fields
+                        educationFields.style.display = 'flex';
+                        lastAttendedFields.style.display = 'none';
+                        
+                        // Set all inputs in last-attended-fields to "NA" when hidden
+                        document.querySelectorAll('#last-attended-fields input').forEach(function (input) {
+                            if (input.getAttribute('data-original-value') === null) {
+                                // Save the original value if it hasn't been saved yet
+                                input.setAttribute('data-original-value', input.value);
+                            }
+                            input.value = 'NA'; // Set value to "NA"
+                        });
+            
+                        // Ensure original values are retained when showing education fields
+                        document.querySelectorAll('#educationFields input').forEach(function (input) {
+                            if (input.getAttribute('data-original-value') === null) {
+                                // Save the original value if it hasn't been saved yet
+                                input.setAttribute('data-original-value', input.value);
+                            }
+                        });
+                    }
+                }
+            
+                document.getElementById('undergraduate').addEventListener('change', updateFieldsVisibility);
+            
+                // Call updateFieldsVisibility on page load to set the correct initial state
+                window.addEventListener('DOMContentLoaded', function () {
+                    updateFieldsVisibility(); // Initialize the fields based on the current checkbox state
+                });
+            </script>
+            
+            
+            
+            
+            
+
+
+
+
+        
+
+
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+            <div class="form-group">
+                <label for="skills">Skills  <span style="color:darkgoldenrod;">Comma Separated (Leadership, Creativity)</span></label>
+                <div class="input-group input-group-merge">
+                    <span id="basic-icon-default-phone2" class="input-group-text">
+                        <i class='bx bx-cog'></i>
+                    </span>
+                    <textarea type="text" name="skills" class="form-control" id="skills" placeholder="{{ user.skills }}" required>{{ user.skills }}</textarea>
+                </div>
+            </div>
+        </div>
+        <style>
+            .dropdown-menu {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+            .checkbox-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+            .form-check-input:checked {
+                background-color: #007bff; /* Change this to your desired color */
+                border-color: #007bff; /* Change this to your desired color */
+            }
+            .form-check-input:checked:focus {
+                box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25); /* Optional: adds a shadow effect */
+            }
+        </style>
+
+      <!-- Experience 1 -->
+<!-- Experience 1 -->
+<div class="card accordion-item mb-3">
+    <h2 class="accordion-header" id="headingOne">
+        <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionOne" aria-expanded="false" aria-controls="accordionOne">
+            Add Experience 1
+        </button>
+    </h2>
+    <div id="accordionOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyname1">Company Name</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyname1" class="form-control" id="companyname1" placeholder="Company Name" value="{{ applicant_details.companyname1 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyadd1">Company Address</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyadd1" class="form-control" id="companyadd1" placeholder="Company Address" value="{{ applicant_details.companyadd1 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="position1">Position</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="position1" class="form-control" id="position1" placeholder="Position" value="{{ applicant_details.position1 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="date1">Inclusive Dates (MM/YYYY to MM/YYYY)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="date1" class="form-control" id="date1" placeholder="MM/YYYY to MM/YYYY" value="{{ applicant_details.date1 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="status1">Status</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-question-mark"></i></span>
+                            <select name="status1" id="status1" class="form-control" required>
+                                <option value="NA" {% if applicant_details.status1 is none %} selected {% endif %}>Select</option>
+                                <option value="Permanent" {% if applicant_details.status1 == 'Permanent' %} selected {% endif %}>Permanent</option>
+                                <option value="Contractual" {% if applicant_details.status1 == 'Contractual' %} selected {% endif %}>Contractual</option>
+                                <option value="Part-time" {% if applicant_details.status1 == 'Part-time' %} selected {% endif %}>Part-time</option>
+                                <option value="Probationary" {% if applicant_details.status1 == 'Probationary' %} selected {% endif %}>Probationary</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Experience 2 -->
+<div class="card accordion-item mb-3">
+    <h2 class="accordion-header" id="headingTwo">
+        <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionTwo" aria-expanded="false" aria-controls="accordionTwo">
+            Add Experience 2
+        </button>
+    </h2>
+    <div id="accordionTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyname2">Company Name</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyname2" class="form-control" id="companyname2" placeholder="Company Name" value="{{ applicant_details.companyname2 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyadd2">Company Address</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyadd2" class="form-control" id="companyadd2" placeholder="Company Address" value="{{ applicant_details.companyadd2 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="position2">Position</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="position2" class="form-control" id="position2" placeholder="Position" value="{{ applicant_details.position2 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="date2">Inclusive Dates (MM/YYYY to MM/YYYY)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="date2" class="form-control" id="date2" placeholder="MM/YYYY to MM/YYYY" value="{{ applicant_details.date2 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="status2">Status</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-question-mark"></i></span>
+                            <select name="status2" id="status2" class="form-control" required>
+                                <option value="NA" {% if applicant_details.status2 is none %} selected {% endif %}>Select</option>
+                                <option value="Permanent" {% if applicant_details.status2 == 'Permanent' %} selected {% endif %}>Permanent</option>
+                                <option value="Contractual" {% if applicant_details.status2 == 'Contractual' %} selected {% endif %}>Contractual</option>
+                                <option value="Part-time" {% if applicant_details.status2 == 'Part-time' %} selected {% endif %}>Part-time</option>
+                                <option value="Probationary" {% if applicant_details.status2 == 'Probationary' %} selected {% endif %}>Probationary</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Experience 3 -->
+<div class="card accordion-item mb-3">
+    <h2 class="accordion-header" id="headingThree">
+        <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionThree" aria-expanded="false" aria-controls="accordionThree">
+            Add Experience 3
+        </button>
+    </h2>
+    <div id="accordionThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyname3">Company Name</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyname3" class="form-control" id="companyname3" placeholder="Company Name" value="{{ applicant_details.companyname3 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyadd3">Company Address</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyadd3" class="form-control" id="companyadd3" placeholder="Company Address" value="{{ applicant_details.companyadd3 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="position3">Position</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="position3" class="form-control" id="position3" placeholder="Position" value="{{ applicant_details.position3 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="date3">Inclusive Dates (MM/YYYY to MM/YYYY)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="date3" class="form-control" id="date3" placeholder="MM/YYYY to MM/YYYY" value="{{ applicant_details.date3 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="status3">Status</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-question-mark"></i></span>
+                            <select name="status3" id="status3" class="form-control" required>
+                                <option value="NA" {% if applicant_details.status3 is none %} selected {% endif %}>Select</option>
+                                <option value="Permanent" {% if applicant_details.status3 == 'Permanent' %} selected {% endif %}>Permanent</option>
+                                <option value="Contractual" {% if applicant_details.status3 == 'Contractual' %} selected {% endif %}>Contractual</option>
+                                <option value="Part-time" {% if applicant_details.status3 == 'Part-time' %} selected {% endif %}>Part-time</option>
+                                <option value="Probationary" {% if applicant_details.status3 == 'Probationary' %} selected {% endif %}>Probationary</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Experience 4 -->
+<div class="card accordion-item mb-3">
+    <h2 class="accordion-header" id="headingFour">
+        <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionFour" aria-expanded="false" aria-controls="accordionFour">
+            Add Experience 4
+        </button>
+    </h2>
+    <div id="accordionFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyname4">Company Name</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyname4" class="form-control" id="companyname4" placeholder="Company Name" value="{{ applicant_details.companyname4 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyadd4">Company Address</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyadd4" class="form-control" id="companyadd4" placeholder="Company Address" value="{{ applicant_details.companyadd4 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="position4">Position</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="position4" class="form-control" id="position4" placeholder="Position" value="{{ applicant_details.position4 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="date4">Inclusive Dates (MM/YYYY to MM/YYYY)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="date4" class="form-control" id="date4" placeholder="MM/YYYY to MM/YYYY" value="{{ applicant_details.date4 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="status4">Status</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-question-mark"></i></span>
+                            <select name="status4" id="status4" class="form-control" required>
+                                <option value="NA" {% if applicant_details.status4 is none %} selected {% endif %}>Select</option>
+                                <option value="Permanent" {% if applicant_details.status4 == 'Permanent' %} selected {% endif %}>Permanent</option>
+                                <option value="Contractual" {% if applicant_details.status4 == 'Contractual' %} selected {% endif %}>Contractual</option>
+                                <option value="Part-time" {% if applicant_details.status4 == 'Part-time' %} selected {% endif %}>Part-time</option>
+                                <option value="Probationary" {% if applicant_details.status4 == 'Probationary' %} selected {% endif %}>Probationary</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Experience 5 -->
+<div class="card accordion-item mb-3">
+    <h2 class="accordion-header" id="headingFive">
+        <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionFive" aria-expanded="false" aria-controls="accordionFive">
+            Add Experience 5
+        </button>
+    </h2>
+    <div id="accordionFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyname5">Company Name</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyname5" class="form-control" id="companyname5" placeholder="Company Name" value="{{ applicant_details.companyname5 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="companyadd5">Company Address</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="companyadd5" class="form-control" id="companyadd5" placeholder="Company Address" value="{{ applicant_details.companyadd5 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group mb-3">
+                        <label for="position5">Position</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="position5" class="form-control" id="position5" placeholder="Position" value="{{ applicant_details.position5 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="date5">Inclusive Dates (MM/YYYY to MM/YYYY)</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-building-house"></i></span>
+                            <input type="text" name="date5" class="form-control" id="date5" placeholder="MM/YYYY to MM/YYYY" value="{{ applicant_details.date5 or 'NA' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="status5">Status</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-question-mark"></i></span>
+                            <select name="status5" id="status5" class="form-control" required>
+                                <option value="NA" {% if applicant_details.status5 is none %} selected {% endif %}>Select</option>
+                                <option value="Permanent" {% if applicant_details.status5 == 'Permanent' %} selected {% endif %}>Permanent</option>
+                                <option value="Contractual" {% if applicant_details.status5 == 'Contractual' %} selected {% endif %}>Contractual</option>
+                                <option value="Part-time" {% if applicant_details.status5 == 'Part-time' %} selected {% endif %}>Part-time</option>
+                                <option value="Probationary" {% if applicant_details.status5 == 'Probationary' %} selected {% endif %}>Probationary</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+         
+        
+          
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="otherskills">Other Skills</label>
+                        <div class="dropdown">
+                            <button class="genric-btn primary-border radius dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Select Skills
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <div class="checkbox-grid">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="AUTO MECHANIC" id="autoMechanic" {% if 'AUTO MECHANIC' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="autoMechanic">AUTO MECHANIC</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="ELECTRICIAN" id="electrician" {% if 'ELECTRICIAN' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="electrician">ELECTRICIAN</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="PHOTOGRAPHY" id="photography" {% if 'PHOTOGRAPHY' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="photography">PHOTOGRAPHY</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="BEAUTICIAN" id="beautician" {% if 'BEAUTICIAN' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="beautician">BEAUTICIAN</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="EMBROIDERY" id="embroidery" {% if 'EMBROIDERY' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="embroidery">EMBROIDERY</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="PLUMBING" id="plumbing" {% if 'PLUMBING' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="plumbing">PLUMBING</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="CARPENTRY WORK" id="carpentry" {% if 'CARPENTRY WORK' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="carpentry">CARPENTRY WORK</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="GARDENING" id="gardening" {% if 'GARDENING' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="gardening">GARDENING</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="SEWING DRESSES" id="sewing" {% if 'SEWING DRESSES' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="sewing">SEWING DRESSES</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="COMPUTER LITERATE" id="computerLiterate" {% if 'COMPUTER LITERATE' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="computerLiterate">COMPUTER LITERATE</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="MASONRY" id="masonry" {% if 'MASONRY' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="masonry">MASONRY</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="STENOGRAPHY" id="stenography" {% if 'STENOGRAPHY' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="stenography">STENOGRAPHY</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="DOMESTIC CHORES" id="domesticChores" {% if 'DOMESTIC CHORES' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="domesticChores">DOMESTIC CHORES</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="PAINTER/ARTIST" id="painterArtist" {% if 'PAINTER/ARTIST' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="painterArtist">PAINTER/ARTIST</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="TAILORING" id="tailoring" {% if 'TAILORING' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="tailoring">TAILORING</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="DRIVER" id="driver" {% if 'DRIVER' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="driver">DRIVER</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="PAINTING JOBS" id="paintingJobs" {% if 'PAINTING JOBS' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="paintingJobs">PAINTING JOBS</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="other_skills[]" value="OTHERS" id="others" {% if 'OTHERS' in (user.otherskills.split(',') if user.otherskills else []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="others">OTHERS</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    
+
+        
+        
+
+
+        <div style="border-bottom: 3px solid #ccc; margin-bottom: 30px;" class="col-12" >
+
+        </div>
+        <b style="font-size: 15px; margin-bottom: 20px;" > Resume Related </b>
+
+        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-12">
+            <div class="form-group">
+                <label for="skills">About me</label>
+                <div class="input-group input-group-merge">
+                    <span id="basic-icon-default-phone2" class="input-group-text">
+                        <i class='bx bx-user-circle'></i>
+                    </span>
+                    <textarea type="text" name="aboutme" class="form-control" id="aboutme" placeholder="{{ user.aboutme }}" required>{{ user.aboutme }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        
+
+		</div>
+  
+		<div class="row gutters">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="margin-bottom: 20px;">
+		
+			</div>
+		</div>
+        <div class="row gutters">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="text-right">
+                    <button type="button"  id="confirmChangesBtn" class="genric-btn primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById('openModalBtn').addEventListener('click', function() {
+                $('#confirmationModal').modal('show');
+            });
+    
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+        $(document).ready(function(){
+            $('.input-with-placeholder').on('focus', function(){
+                $(this).removeAttr('placeholder'); // Remove placeholder attribute
+                // OR
+                // $(this).css('color', 'transparent'); // Optionally, fade out placeholder text by making it transparent
+            });
+        });
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();  // Prevent the default form submission
+        
+                // Trigger the Save Changes button click
+                document.getElementById('confirmChangesBtn').click();
+            }
+        });
+        
+        </script>
+
+        <script>
+            document.getElementById('confirmChangesBtn').addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+            
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Confirm Save Changes",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, save it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Perform the form submission
+                        var form = document.getElementById('setupAccountForm');
+                        
+                        // Create a FormData object from the form
+                        var formData = new FormData(form);
+            
+                        // Use Fetch API to submit the form data
+                        fetch(form.action, {
+                            method: form.method,
+                            body: formData
+                        }).then(response => {
+                            if (response.ok) {
+                                // Show success message
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Your changes have been saved.',
+                                    icon: 'success',
+                                    confirmButtonColor: '#3085d6'
+                                }).then(() => {
+                                    // Optionally, redirect or reload the page
+                                    location.reload();
+                                });
+                            } else {
+                                // Show error message if the submission fails
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'There was a problem saving your changes.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#d33'
+                                });
+                            }
+                        }).catch(error => {
+                            // Show error message if there is a network error or other issue
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'There was a problem saving your changes.',
+                                icon: 'error',
+                                confirmButtonColor: '#d33'
+                            });
+                        });
+                    }
+                });
+            });
+            </script>
+
+        <script>
+            document.getElementById('uploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();  // Prevent the default form submission
+    
+                var formData = new FormData(this);
+    
+                fetch('/apply_peso', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Network response was not ok');
+                        });
+                    }
+                    // Handle successful response
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'File uploaded successfully!',
+                        allowOutsideClick: false, // Ensure the user cannot click outside the alert to close it
+                        allowEscapeKey: false,    // Ensure the user cannot press ESC to close the alert
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/user_profile';  // Redirect to user profile
+                        }
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message,
+                    });
+                    console.error('There was an error!', error);
+                });
+            });
+        </script>
+            
+       
+  </form>
+	</div>
+</div>
+</div>
+</div>
+</div>
+<footer>
+    <!-- Footer Start-->
+    <div class="footer-area footer-bg" style="padding-top: 50px; margin-top: 30px;">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+               
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-tittle">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li>
+                                <p>Address :Your address goes
+                                    here, your demo address.</p>
+                                </li>
+                                <li><a href="#">Phone : 09216170786</a></li>
+                                <li><a href="#">Email : pesopila@gmail.com</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+           
+            </div>
+           <!--  -->
+    
+        </div>
+    </div>
+    <!-- footer-bottom area -->
+    <div class="footer-bottom-area footer-bg">
+        <div class="container">
+            <div class="footer-border">
+                 <div class="row d-flex justify-content-between align-items-center">
+                     <div class="col-xl-10 col-lg-10 ">
+                         <div class="footer-copy-right">
+                             <p>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+</p>
+                         </div>
+                     </div>
+                     <div class="col-xl-2 col-lg-2">
+                         <div class="footer-social f-right">
+                             <a href="#"><i class="fab fa-facebook-f"></i></a>
+                             <a href="#"><i class="fab fa-twitter"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End-->
+</footer>
+
+</div>
+</div>
+<!-- All JS Custom Plugins Link Here here -->
+<script src="static/admin_assets/vendor/libs/jquery/jquery.js"></script>
+<script src="static/admin_assets/vendor/libs/popper/popper.js"></script>
+<script src="static/admin_assets/vendor/js/bootstrap.js"></script>
+<script src="static/admin_assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+<script src="static/admin_assets/vendor/js/menu.js"></script>
+<!-- endbuild -->
+<script src="static/admin_assets/js/config.js"></script>
+<!-- Main JS -->
+<script src="static/admin_assets/js/main.js"></script>
+
+
+
+<!-- Page JS -->
+
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script src="static/assets/js/vendor/modernizr-3.5.0.min.js"></script>
+<!-- Jquery, Popper, Bootstrap -->
+<script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script> <!-- Keep this line -->
+<script src="static/assets/js/popper.min.js"></script>
+<script src="static/assets/js/bootstrap.min.js"></script>
+<!-- Jquery Mobile Menu -->
+<script src="static/assets/js/jquery.slicknav.min.js"></script>
+
+<!-- Jquery Slick , Owl-Carousel Range -->
+<script src="static/assets/js/owl.carousel.min.js"></script>
+<script src="static/assets/js/slick.min.js"></script>
+<script src="static/assets/js/price_rangs.js"></script>
+<!-- One Page, Animated-HeadLin -->
+<script src="static/assets/js/wow.min.js"></script>
+<script src="static/assets/js/animated.headline.js"></script>
+<script src="static/assets/js/jquery.magnific-popup.js"></script>
+
+<!-- Scrollup, nice-select, sticky -->
+<script src="static/assets/js/jquery.scrollUp.min.js"></script>
+<script src="static/assets/js/jquery.nice-select.min.js"></script>
+<script src="static/assets/js/jquery.sticky.js"></script>
+
+<!-- Bootstrap Datepicker -->
+
+
+<!-- contact js -->
+<script src="static/assets/js/contact.js"></script>
+<script src="static/assets/js/jquery.form.js"></script>
+<script src="static/assets/js/jquery.validate.min.js"></script>
+<script src="static/assets/js/mail-script.js"></script>
+<script src="static/assets/js/jquery.ajaxchimp.min.js"></script>
+
+<!-- Jquery Plugins, main Jquery -->	
+<script src="static/assets/js/plugins.js"></script>
+<script src="static/assets/js/main.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+$(document).ready(function(){
+    $('#datepicker').datepicker({
+        format: 'mm/dd/yyyy'  // Specify the format here
+    });
+});
+    $('#passportExpDatepicker').datepicker({
+        format: 'mm/dd/yyyy',
+        autoclose: true,
+        todayHighlight: true
+    });
+    
+</script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+</body>
+
+{% endblock %}

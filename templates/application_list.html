@@ -1,0 +1,263 @@
+{% extends 'employerheader_base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="static/admin_assets/vendor/css/core.css" class="template-customizer-core-css" />
+<link rel="stylesheet" href="static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+<link rel="stylesheet" href="static/admin_assets/vendor/fonts/boxicons.css" />
+	<!-- Hero Area Start-->
+	<div class="slider-area ">
+		<div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="assets/img/hero/about.jpg">
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-12">
+						<div class="hero-cap text-center">
+							<h2>Application List</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+		.progress-table-wrap {
+			width: 100%;
+			overflow-x: auto;
+		}
+		
+		.progress-table {
+			width: 100%;
+			display: table;
+			table-layout: fixed;
+		}
+		
+		.table-head, .table-row {
+			display: table-row;
+		}
+		
+		.serial, .action {
+			display: table-cell;
+			padding: 10px;
+			text-align: left;
+		}
+		
+		.serial-small {
+			width: 5%; /* Adjust this width to be minimal */
+		}
+		
+		.table-head .serial, .table-row .serial {
+			width: 20%;
+		}
+		
+		.table-head .serial-small, .table-row .serial-small {
+			width: 5%; /* Ensure this is minimal */
+		}
+		
+		.action {
+			width: 20%;
+			text-align: center;
+		}
+		
+	
+		
+		</style>
+		
+
+		<div class="whole-wrap">
+			<div class="container box_1170">
+				<div class="section-top-border">
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<h3 class="mb-30">Applicants</h3>
+						<div style="display: flex; gap: 10px;">
+							<!-- Dropdown for application status -->
+							<select id="applicationStatusDropdown" onchange="filterApplicants()">
+								<option value="All" data-type="application">All Applications</option>
+								<option value="Approved" data-type="application">Approved</option>
+								<option value="Pending" data-type="application">Pending</option>
+								<option value="Under Review" data-type="application">Under Review</option>
+								<option value="Rejected" data-type="application">Rejected</option>
+							</select>
+		
+							<!-- Dropdown for employment status -->
+							<select id="employmentStatusDropdown" onchange="filterApplicants()">
+								<option value="All" data-type="employment">All Employment</option>
+								<option value="Active" data-type="employment">Active Employment</option>
+								<option value="Inactive" data-type="employment">Inactive Employment</option>
+							</select>
+						</div>
+					</div>
+		
+					<div class="card">
+						<h5 class="card-header">List</h5>
+						<div class="table-responsive text-nowrap">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th><strong>Name</strong></th>
+										<th>Address</th>
+										<th>Phone no</th>
+										<th>Email</th>
+										<th>Date Applied</th>
+										<th>Status</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody class="table-border-bottom-0">
+									{% for application in applications %}
+									<tr class="applicant-row" 
+										data-status="{{ application.application_status }}" 
+										data-employment-status="{{ application.employment_status }}">
+										<td>{{ loop.index }}</td>
+										<td><strong>{{ application.user.firstname }} {{ application.user.lastname }}</strong></td>
+										<td>{{ application.user.address }}</td>
+										<td>0{{ application.user.phone }}</td>
+										<td>{{ application.user.email }}</td>
+										<td>{{ application.application_date.strftime("%B %d, %Y %p") }}</td>
+										<td> {% if application.application_status == 'Approved' %}
+											<span class="badge bg-label-success me-1">{{ application.application_status }}</span>
+										{% elif application.application_status == 'Under Review' %}
+											<span class="badge bg-label-info me-1">{{ application.application_status }}</span>
+										{% elif application.application_status == 'Rejected' %}
+											<span class="badge bg-label-danger me-1">{{ application.application_status }}</span>
+										{% else %}
+											<span class="badge bg-label-secondary me-1">{{ application.application_status }}</span>
+										{% endif %}</td>
+										<td>
+											<a class="genric-btn primary radius" href="{{ url_for('applicant_details', application_id=application.application_id) }}">
+												View more
+											</a>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+		
+				</div>
+		
+				<script>
+					function filterApplicants() {
+						var applicationDropdown = document.getElementById('applicationStatusDropdown');
+						var employmentDropdown = document.getElementById('employmentStatusDropdown');
+		
+						var selectedApplicationStatus = applicationDropdown.value;
+						var selectedEmploymentStatus = employmentDropdown.value;
+		
+						var rows = document.querySelectorAll('.applicant-row');
+		
+						rows.forEach(function(row) {
+							var applicationStatus = row.getAttribute('data-status');
+							var employmentStatus = row.getAttribute('data-employment-status');
+		
+							var display = 'none';
+		
+							// Check if either of the dropdowns has a specific value selected
+							if ((selectedApplicationStatus === 'All' || applicationStatus === selectedApplicationStatus) &&
+								(selectedEmploymentStatus === 'All' || employmentStatus === selectedEmploymentStatus)) {
+								display = ''; // Default display for table rows
+							}
+		
+							row.style.display = display;
+						});
+					}
+				</script>
+			</div>
+		</div>
+		
+		
+		
+		
+
+	<footer>
+		<!-- Footer Start-->
+		<div class="footer-area footer-bg" style="padding-top: 50px;">
+			<div class="container">
+				<div class="row d-flex justify-content-between">
+				   
+					<div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+						<div class="single-footer-caption mb-50">
+							<div class="footer-tittle">
+								<h4>Contact Info</h4>
+								<ul>
+									<li>
+									<p>Address :Your address goes
+										here, your demo address.</p>
+									</li>
+									<li><a href="#">Phone : 09216170786</a></li>
+									<li><a href="#">Email : pesopila@gmail.com</a></li>
+								</ul>
+							</div>
+	
+						</div>
+					</div>
+			   
+				</div>
+			   <!--  -->
+		
+			</div>
+		</div>
+		<!-- footer-bottom area -->
+		<div class="footer-bottom-area footer-bg">
+			<div class="container">
+				<div class="footer-border">
+					 <div class="row d-flex justify-content-between align-items-center">
+						 <div class="col-xl-10 col-lg-10 ">
+							 <div class="footer-copy-right">
+								 <p>
+	Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+	</p>
+							 </div>
+						 </div>
+						 <div class="col-xl-2 col-lg-2">
+							 <div class="footer-social f-right">
+								 <a href="#"><i class="fab fa-facebook-f"></i></a>
+								 <a href="#"><i class="fab fa-twitter"></i></a>
+							 </div>
+						 </div>
+					 </div>
+				</div>
+			</div>
+		</div>
+		<!-- Footer End-->
+	</footer>
+	
+<!-- JS here -->
+		<!-- All JS Custom Plugins Link Here here -->
+		<!-- <script src="./assets/js/bootstrap.bundle.min.js"></script> -->
+        <script src="static/assets/js/vendor/modernizr-3.5.0.min.js"></script>
+		<!-- Jquery, Popper, Bootstrap -->
+		<script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script>
+        <script src="static/assets/js/popper.min.js"></script>
+        <script src="static/assets/js/bootstrap.min.js"></script>
+	    <!-- Jquery Mobile Menu -->
+        <script src="static/assets/js/jquery.slicknav.min.js"></script>
+
+		<!-- Jquery Slick , Owl-Carousel Plugins -->
+        <script src="static/assets/js/owl.carousel.min.js"></script>
+		<script src="static/assets/js/slick.min.js"></script>
+		<script src="static/assets/js/price_rangs.js"></script>
+		
+		<!-- One Page, Animated-HeadLin -->
+        <script src="static/assets/js/wow.min.js"></script>
+		<script src="static/assets/js/animated.headline.js"></script>
+		<script src="static/assets/js/jquery.magnific-popup.js"></script>
+		
+		<!-- Scrollup, nice-select, sticky -->
+        <script src="static/assets/js/jquery.scrollUp.min.js"></script>
+        <script src="static/assets/js/jquery.nice-select.min.js"></script>
+		<script src="static/assets/js/jquery.sticky.js"></script>
+        
+        <!-- contact js -->
+        <script src="static/assets/js/contact.js"></script>
+        <script src="static/assets/js/jquery.form.js"></script>
+        <script src="static/assets/js/jquery.validate.min.js"></script>
+        <script src="static/assets/js/mail-script.js"></script>
+        <script src="static/assets/js/jquery.ajaxchimp.min.js"></script>
+        
+		<!-- Jquery Plugins, main Jquery -->	
+        <script src="static/assets/js/plugins.js"></script>
+        <script src="static/assets/js/main.js"></script>
+        
+</body>
+{% endblock %}

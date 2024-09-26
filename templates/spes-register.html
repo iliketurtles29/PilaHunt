@@ -1,0 +1,152 @@
+{% extends 'spes-base.html' %}
+
+{% block content %}
+<script src="static/admin_assets/vendor/js/helpers.js"></script>
+
+<!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+<!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+<script src="static/admin_assets/js/config.js"></script>
+    <!-- Helpers -->
+    <script src="../assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="../assets/js/config.js"></script>
+  </head>
+
+  <body>
+    <!-- Content -->
+
+    <div class="container-xxl">
+      <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+          <!-- Register Card -->
+          <div class="card">
+            <div class="card-body">
+              <!-- Logo -->
+              <div class="app-brand justify-content-center">
+            
+              </div>
+              <!-- /Logo -->
+              <h4 class="mb-2">Your work starts here 🚀</h4>
+
+              <form id="formAuthentication" class="mb-3" action="/spes_register" method="post">
+                <div class="mb-3">
+                  <label for="spes_name" class="form-label">Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="spes_name"
+                    name="spes_name"
+                    placeholder="Enter your username"
+                    autofocus
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="spes_email" class="form-label">Email</label>
+                  <input type="text" class="form-control" id="spes_email" name="spes_email" placeholder="Enter your email" />
+                </div>
+                <div class="mb-3 form-password-toggle">
+                  <label class="form-label" for="spes_password">Password</label>
+                  <div class="input-group input-group-merge">
+                    <input
+                      type="password"
+                      id="spes_password"
+                      class="form-control"
+                      name="spes_password"
+                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                      aria-describedby="spes_password"
+                    />
+                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                  </div>
+                </div>
+
+                <div class="mb-3 form-password-toggle">
+                  <label class="form-label" for="confirm_password">Confirm Password</label>
+                  <div class="input-group input-group-merge">
+                      <input
+                          type="password"
+                          id="confirm_password"
+                          class="form-control"
+                          name="confirm_password"
+                          placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                          aria-describedby="confirm_password"
+                      />
+                      <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                  </div>
+              </div>
+
+                <span style="color: #ff4b4b;; margin-left: 5px;" class="error-message" id="passwordError"></span>
+                <button class="btn btn-primary d-grid w-100" disabled id="signupButton" type="submit">Sign up</button>
+              </form>
+              
+
+              <p class="text-center">
+                <span>Already have an account?</span>
+                <a href="/spes_login">
+                  <span>Log in instead</span>
+                </a>
+              </p>
+            </div>
+          </div>
+          <!-- Register Card -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const passwordInput = document.getElementById('spes_password');
+      const confirmPasswordInput = document.getElementById('confirm_password');
+      const passwordError = document.getElementById('passwordError');
+      const signupButton = document.querySelector('button[type="submit"]');
+  
+      confirmPasswordInput.addEventListener('input', () => {
+          const password = passwordInput.value;
+          const confirmPassword = confirmPasswordInput.value;
+  
+          // Check if passwords match
+          if (password !== confirmPassword) {
+              confirmPasswordInput.classList.add('error');
+              passwordError.innerText = "Passwords don't match";
+              signupButton.disabled = true;
+          } else {
+              confirmPasswordInput.classList.remove('error');
+              passwordError.innerText = "";
+              signupButton.disabled = false;
+  
+              // Check password strength
+              const regex = /^(?=.*[!@#$%^&*()_+}{:;'?/>,.<,])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
+              if (!regex.test(password)) {
+                  passwordInput.classList.add('error');
+                  passwordError.innerText = "Password should be at least 8 characters long and contain at least one special character, one uppercase letter, one lowercase letter, and one digit.";
+                  signupButton.disabled = true;
+              } else {
+                  passwordInput.classList.remove('error');
+                  passwordError.innerText = "";
+                  signupButton.disabled = false;
+              }
+          }
+      });
+  </script>
+  
+  
+    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="../assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+
+    <!-- Main JS -->
+    <script src="../assets/js/main.js"></script>
+
+    <!-- Page JS -->
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>
+{% endblock %}

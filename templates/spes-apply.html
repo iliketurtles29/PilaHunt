@@ -1,0 +1,279 @@
+{% extends 'spes-header-base.html' %}
+{% block content %}
+<link rel="stylesheet" href="static/assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/assets/css/owl.carousel.min.css">
+<link rel="stylesheet" href="static/assets/css/flaticon.css">
+<link rel="stylesheet" href="static/assets/css/price_rangs.css">
+<link rel="stylesheet" href="static/assets/css/slicknav.css">
+<link rel="stylesheet" href="static/assets/css/animate.min.css">
+<link rel="stylesheet" href="static/assets/css/magnific-popup.css">
+<link rel="stylesheet" href="static/assets/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="static/assets/css/themify-icons.css">
+<link rel="stylesheet" href="static/assets/css/slick.css">
+<link rel="stylesheet" href="static/assets/css/nice-select.css">
+<link rel="stylesheet" href="static/assets/css/style.css">
+<link rel="stylesheet" href="static/admin_assets/vendor/css/core.css" class="template-customizer-core-css" />
+<link rel="stylesheet" href="static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+<link rel="stylesheet" href="static/admin_assets/vendor/fonts/boxicons.css" />
+
+<main>
+
+    <div class="job-post-company pt-60 pb-60">
+        <div class="container">
+                
+            <div class="row justify-content-between">
+                <!-- Left Content -->
+                <div class="col-xl-7 col-lg-8">
+                    <!-- job single -->
+                    <div class="single-job-items mb-50">
+                        <div class="job-items">
+                            <div class="company-img company-img-details">
+                               
+                            </div>
+                            <div class="job-tittle">
+                                <a href="#">
+                                    <h4>Special Program for Employment of Students</h4>
+                                </a>
+                                <ul>
+                                    <li><i class="fas fa-map-marker-alt"></i>Around Pila, Laguna</li>
+                                    <li><i class="fa-solid fa-file-contract"></i>Part-time</li>
+                               
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                      <!-- job single End -->
+                   
+                    <div class="job-post-details">
+                        <div class="post-details1 mb-50">
+                            <!-- Small Section Tittle -->
+                            <div class="small-section-tittle">
+                                <h4>About Job</h4>
+                            </div>
+                            <p>Special program for the Employment of Students (SPES)
+                                The Special Program for the Employment of Students (SPES) of the DOLE-BLE is an employment bridging program during summer or Chrismas Vacation that aims to augment the family’s income of poor but deserving students, out-of-school youth (OSY) and dependents of displacedor would-be dispalced workers to continue and finish their education. While gaining experience and enhancing their capabilities as future members of the workforce, the program effectively hones the beneficiaries’ skills while molding their attitude and habits towards work in a positive manner.
+                                
+                                </p>
+                        </div>
+                        <div class="post-details2  mb-50">
+                             <!-- Small Section Tittle -->
+                            <div class="small-section-tittle">
+                                <h4>Qualification Standards</h4>
+                            </div>
+                            <ul>
+                                <li>At least 15 years old, but not more than 30 years old at the time of application</li>
+                                <li>Preferably residing within Pila, Laguna</li>
+                                <li>Currently enrolled in an educational institution, either public or private</li>
+                                <li>Has no failing grade and has earned at least a passing general weighted average in the most recent academic year or term</li>
+                                <li>Should be of good moral character</li>
+                                <li>Proficient in performing basic computer operations and tasks</li>
+                                <li>Must be fit for work</li>
+                            </ul>
+                                
+                        </div>
+                        <div class="post-details2  mb-50">
+                             <!-- Small Section Tittle -->
+                            <div class="small-section-tittle">
+                                <h4>Requirements</h4>
+                            </div>
+                            <ul>
+                         
+                                    <li>SPES form with picture</li>
+                                    <li>ID pictures</li>
+                                    <li>Birth Certificate issued by the Philippine Statistics Authority</li>
+                                    <li>True Copy of Grades or Out-of-School Youth Certificate</li>
+                                    <li>Certificate of Indigency, Parent’s/Guardian’s ITR, and Certificate of Guardianship, if applicable</li>
+                            
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Right Content -->
+                <div class="col-xl-4 col-lg-4">
+                    <div class="post-details3  mb-50">
+                        <!-- Small Section Tittle -->
+                       <div class="small-section-tittle">
+                           <h4>Job Overview</h4>
+                       </div>
+                      <ul>
+                        <li>Contact Person : <span>Jayson D. Palasin</span></li>
+                        <li>Contact : <span>0999999999</span></li>
+                        <li>Email : <span>pesopila@gmail.com</span></li>
+                       
+                          
+                      </ul>
+                      <div class="apply-button-group">
+                        {% if not spes.spes_firstname or not spes.spes_middlename or not spes.spes_lastname or not spes.spes_civil or not spes.spes_spestype or not spes.spes_elemschool or not spes.spes_elemgrad or not spes.spes_junschool or not spes.spes_jungrad or not spes.spes_senschool or not spes.spes_strand or not spes.spes_sengrad or not spes.spes_colschool or not spes.spes_course or not spes.spes_colgrad  or not spes.spes_mofirstname or not spes.spes_momiddlename or not spes.spes_molastname or not spes.spes_fafirstname or not spes.spes_famiddlename or not spes.spes_falastname or not spes.spes_facontact or not spes.spes_mocontact %}                        <button type="button" class="genric-btn danger" data-toggle="modal" data-target="#editProfileModal">
+                            Edit Profile First
+                        </button>
+                        {% else %}
+                        {% if not spes.resume or not spes.birth_certificate or not spes.grades%} <button type="button" class="genric-btn danger" data-toggle="modal" data-target="#editProfileModal">
+                            Upload documents First
+                        </button>
+                        {% else %}
+                        {% if spes.spes_application_status == 'Pending' or spes.spes_application_status == 'Under Review' or spes.spes_application_status == 'Approved' or spes.spes_application_status == 'Rejected'%}
+                            Your application is currently <span style="color:midnightblue; font-weight: bold;">{{ spes.spes_application_status }}</span>
+                        {% else %}
+                            <button type="button" class="genric-btn primary" data-toggle="modal" data-target="#applyModal">
+                                Apply
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                    {% endif %}
+                    
+
+                        <div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="applyModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="applyModalLabel">Apply to SPES</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                    
+                                        <form action="/spes_apply_submit" method="POST" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                            </div>
+                                            <div class="form-group">
+                                                <span style="color:tomato;">Make sure that your Requirements are correct before application.</span>
+                                                
+                                                <p style="margin-bottom: -5px;">• SPES Application form</p>
+                                                <input type="hidden" name="resume" value="{{ spes.resume }}">
+                                                
+                                                <p style="margin-bottom: -5px;"><bold>• Birth Certificate</bold> </p>
+                                                <input type="hidden" name="birth_certificate" value="{{ spes.birth_certificate }}">
+                                                
+                                                <p style="margin-bottom: -5px;"><bold>• Grade</bold></p>
+                                                <input type="hidden" name="grades" value="{{ spes.grades }}">
+                                            </div>
+                                            <!-- Hidden input field to include the company_id -->
+                                            <input type="hidden" name="company_id" value="{{ company_id }}">
+                                            <button type="submit" class="genric-btn primary float-right">Submit</button>
+                                        </form>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                  
+                   </div>
+                   <div class="post-details4 mb-50">
+                    <div class="small-section-tittle">
+                        <h4>View Company Via Google Map</h4>
+                    </div>
+                    <p></p>
+                    <iframe
+                        width="375"
+                        height="300"
+                        style="border:0; margin-bottom: 15px;"
+                        loading="lazy"
+                        allowfullscreen
+                        src="">
+                    </iframe>
+                 
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- job post company End -->
+    
+
+</main>
+<footer>
+    <!-- Footer Start-->
+    <div class="footer-area footer-bg" style="padding-top: 50px;">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+               
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-tittle">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li>
+                                <p>Address :Your address goes
+                                    here, your demo address.</p>
+                                </li>
+                                <li><a href="#">Phone : 09216170786</a></li>
+                                <li><a href="#">Email : pesopila@gmail.com</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+           
+            </div>
+           <!--  -->
+    
+        </div>
+    </div>
+    <!-- footer-bottom area -->
+    <div class="footer-bottom-area footer-bg">
+        <div class="container">
+            <div class="footer-border">
+                 <div class="row d-flex justify-content-between align-items-center">
+                     <div class="col-xl-10 col-lg-10 ">
+                         <div class="footer-copy-right">
+                             <p>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+</p>
+                         </div>
+                     </div>
+                     <div class="col-xl-2 col-lg-2">
+                         <div class="footer-social f-right">
+                             <a href="#"><i class="fab fa-facebook-f"></i></a>
+                             <a href="#"><i class="fab fa-twitter"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End-->
+</footer>
+<!-- JS here -->
+
+    <!-- All JS Custom Plugins Link Here here -->
+    <script src="{{ url_for('static', filename='assets/js/vendor/modernizr-3.5.0.min.js') }}"></script>
+    <!-- Jquery, Popper, Bootstrap -->
+    <script src="{{ url_for('static', filename='assets/js/vendor/jquery-1.12.4.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
+    <!-- Jquery Mobile Menu -->
+    <script src="{{ url_for('static', filename='assets/js/jquery.slicknav.min.js') }}"></script>
+    
+    <!-- Jquery Slick, Owl-Carousel Plugins -->
+    <script src="{{ url_for('static', filename='assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/slick.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/price_rangs.js') }}"></script>
+    
+    <!-- One Page, Animated-HeadLin -->
+    <script src="{{ url_for('static', filename='assets/js/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/animated.headline.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.magnific-popup.js') }}"></script>
+    
+    <!-- Scrollup, nice-select, sticky -->
+    <script src="{{ url_for('static', filename='assets/js/jquery.scrollUp.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.nice-select.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+    
+    <!-- Contact js -->
+    <script src="{{ url_for('static', filename='assets/js/contact.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.form.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.validate.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/mail-script.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.ajaxchimp.min.js') }}"></script>
+    
+    <!-- Jquery Plugins, main Jquery -->
+    <script src="{{ url_for('static', filename='assets/js/plugins.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
+    
+    
+</body>
+{% endblock %}

@@ -1,0 +1,270 @@
+{% extends 'employerheader_base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="static/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="static/assets/css/flaticon.css">
+    <link rel="stylesheet" href="static/assets/css/price_rangs.css">
+    <link rel="stylesheet" href="static/assets/css/slicknav.css">
+    <link rel="stylesheet" href="static/assets/css/animate.min.css">
+    <link rel="stylesheet" href="static/assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="static/assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="static/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="static/assets/css/slick.css">
+    <link rel="stylesheet" href="static/assets/css/nice-select.css">
+    <link rel="stylesheet" href="static/assets/css/style.css">
+    <link rel="stylesheet" href="static/admin_assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="static/admin_assets/vendor/fonts/boxicons.css" />
+<main>
+<div class="slider-area ">
+        <div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="assets/img/icon/job-list1.png">
+            <a href="#"><img src="assets/img/icon/job-list1.png" alt=""></a>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="hero-cap text-center">
+                            <h2>Post job hiring</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            {% if category == 'error' %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                    <strong>Error:</strong> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% elif category == 'success' %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                    <strong>Success:</strong> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <!-- ================ contact section start ================= -->
+    <section class="contact-section">
+        <!-- Add this code where you want to display flash messages -->
+    
+            <div class="container">
+
+{% endwith %}
+    
+                <div class="row" style="margin-top: -60px;">
+                    <div class="col-12">
+                        <h2 class="contact-title">Add Job</h2>
+                    </div>
+                    <br>
+                    <div class="col-lg-30">
+                        <form class="form-contact contact_form" action="/post_job" method="post" id="jobForm" novalidate="novalidate">
+                            <div class="row" style="max-width: fit-content;">
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="company_logo">Job Title</label>
+                                    <input style="border: 1px solid #ccc;" type="text" name="job_title" placeholder="Enter Job Title"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Job Title'" required
+                                    class="single-input">
+                                </div>
+                    
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="company_logo">Job Address</label>
+                                    <input style="border: 1px solid #ccc;" type="text" name="job_address" placeholder="Enter Job Address"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Job Address'" required
+                                    class="single-input">
+                                </div>
+                    
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="salary_range_min">Minimum Salary Range</label>
+                                    <input id="salary_range_min" style="border: 1px solid #ccc;" type="number" name="salary_range_min" placeholder="Enter Minimum Salary Range"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Minimum Salary Range'" required
+                                    class="single-input">
+                                </div>
+                                
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="salary_range_max">Maximum Salary Range</label>
+                                    <input id="salary_range_max" style="border: 1px solid #ccc;" type="number" name="salary_range_max" placeholder="Enter Maximum Salary Range"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Maximum Salary Range'" required
+                                    class="single-input">
+                                </div>
+                    
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="description">Job Description</label>
+                                    <textarea style="border: 1px solid #ccc; resize: vertical;" name="job_description" placeholder="Enter Job Description"
+                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Job Description'" required rows="5"
+                                        class="single-input"></textarea>
+                                </div>
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="description">Skills Required |</label><label>&nbsp;Separate with comma:</label> <span style="color:gold;">( Communication Skills, Leadership, etc)</span>
+                                    <textarea style="border: 1px solid #ccc; resize: vertical;" name="job_requirements" placeholder="Enter Skills Required"
+                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Skills Required'" required rows="5"
+                                        class="single-input"></textarea>
+                                </div>
+                    
+                                <div class="col-sm-6" style="margin-top: 35px;">
+                                    <label for="description">Job Benefits |</label><label style="color:gold;">&nbsp;Separate with comma</label>
+                                    <textarea style="border: 1px solid #ccc; resize: vertical;" name="job_benefits" placeholder="Enter Job Benefits"
+                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Job Benefits'" required rows="5"
+                                        class="single-input"></textarea>
+                                </div>
+                    
+                                <div class="col-sm-6" style="margin-top: 35px;">
+                                    <label for="job_type">Job Type</label>
+                                    <select name="job_type" style="border: 1px solid #ccc !important; display: block; width: 100%; height: 40px;" class="single-input" required>
+                                        <option value="" disabled selected>Select Job Type</option>
+                                        <option value="Full-time">Full-time</option>
+                                        <option value="Part-time">Part-time</option>
+                                    </select>
+                                    <br>
+                                    <label for="status">Job Status</label>
+                                    <select name="status" style="border: 1px solid #ccc !important; display: block; width: 100%; height: 40px;" class="single-input" required>
+                                        <option value="" disabled selected>Select Job Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                    
+                            <input type="hidden" name="contact_person" value="{{ employer.contact_person }}">
+                            <input type="hidden" name="phone_no" value="{{ employer.phone_no }}">
+                            <input type="hidden" name="email_add" value="{{ employer.email_add }}">
+                            <input type="hidden" name="company_logo" value="{{ employer.company_logo }}">
+                    
+                            <div class="form-group mt-3" style="text-align: right;">
+                                <button type="submit" id="submitBtn" class="button button-contactForm boxed-btn" disabled>Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                   
+                </div>
+            </div>
+        </section>
+        <script>
+            // Get the company name from Flask template
+            var companyName = "{{ company_name }}";
+        
+            // Set the value of the input field to company name
+            document.getElementById("company_name_input").value = companyName;
+        
+            // Disable the input field
+            document.getElementById("company_name_input").disabled = true;
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const minSalaryInput = document.getElementById('salary_range_min');
+                const maxSalaryInput = document.getElementById('salary_range_max');
+                const submitButton = document.getElementById('submitBtn');
+        
+                function validateInputs() {
+                    if (minSalaryInput.value.trim() !== '' && maxSalaryInput.value.trim() !== '') {
+                        submitButton.disabled = false;
+                    } else {
+                        submitButton.disabled = true;
+                    }
+                }
+        
+                minSalaryInput.addEventListener('input', validateInputs);
+                maxSalaryInput.addEventListener('input', validateInputs);
+            });
+        </script>
+    
+
+    <!-- ================ contact section end ================= -->
+    <footer>
+        <!-- Footer Start-->
+        <div class="footer-area footer-bg" style="padding-top: 50px;">
+            <div class="container">
+                <div class="row d-flex justify-content-between">
+                   
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                        <div class="single-footer-caption mb-50">
+                            <div class="footer-tittle">
+                                <h4>Contact Info</h4>
+                                <ul>
+                                    <li>
+                                    <p>Address :Your address goes
+                                        here, your demo address.</p>
+                                    </li>
+                                    <li><a href="#">Phone : 09216170786</a></li>
+                                    <li><a href="#">Email : pesopila@gmail.com</a></li>
+                                </ul>
+                            </div>
+    
+                        </div>
+                    </div>
+               
+                </div>
+               <!--  -->
+        
+            </div>
+        </div>
+        <!-- footer-bottom area -->
+        <div class="footer-bottom-area footer-bg">
+            <div class="container">
+                <div class="footer-border">
+                     <div class="row d-flex justify-content-between align-items-center">
+                         <div class="col-xl-10 col-lg-10 ">
+                             <div class="footer-copy-right">
+                                 <p>
+    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+    </p>
+                             </div>
+                         </div>
+                         <div class="col-xl-2 col-lg-2">
+                             <div class="footer-social f-right">
+                                 <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                 <a href="#"><i class="fab fa-twitter"></i></a>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End-->
+    </footer>
+<!-- JS here -->
+	
+		<!-- All JS Custom Plugins Link Here here -->
+        <<script src="static/assets/js/vendor/modernizr-3.5.0.min.js"></script>
+        <!-- Jquery, Popper, Bootstrap -->
+        <script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script>
+        <script src="static/assets/js/popper.min.js"></script>
+        <script src="static/assets/js/bootstrap.min.js"></script>
+        <!-- Jquery Mobile Menu -->
+        <script src="static/assets/js/jquery.slicknav.min.js"></script>
+    
+        <!-- Jquery Slick , Owl-Carousel Plugins -->
+        <script src="static/assets/js/owl.carousel.min.js"></script>
+        <script src="static/assets/js/slick.min.js"></script>
+        <script src="static/assets/js/price_rangs.js"></script>
+        
+        <!-- One Page, Animated-HeadLin -->
+        <script src="static/assets/js/wow.min.js"></script>
+        <script src="static/assets/js/animated.headline.js"></script>
+        <script src="static/assets/js/jquery.magnific-popup.js"></script>
+    
+        <!-- Scrollup, nice-select, sticky -->
+        <script src="static/assets/js/jquery.scrollUp.min.js"></script>
+        <script src="static/assets/js/jquery.nice-select.min.js"></script>
+        <script src="static/assets/js/jquery.sticky.js"></script>
+        
+        <!-- contact js -->
+        <script src="static/assets/js/contact.js"></script>
+        <script src="static/assets/js/jquery.form.js"></script>
+        <script src="static/assets/js/jquery.validate.min.js"></script>
+        <script src="static/assets/js/mail-script.js"></script>
+        <script src="static/assets/js/jquery.ajaxchimp.min.js"></script>
+        
+        <!-- Jquery Plugins, main Jquery -->	
+        <script src="static/assets/js/plugins.js"></script>
+        <script src="static/assets/js/main.js"></script>
+    </main>
+
+{% endblock %}

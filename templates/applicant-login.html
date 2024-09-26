@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pila Hunt</title>
+  <link rel="stylesheet" type="text/css" href="static/style.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico">
+  <script src="static/assets/64d58efce2.js" ></script>
+
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="forms-container">
+          <div class="signin-signup">
+  
+            <form action="/applicant_login" method="post" class="sign-in-form">
+                <h2 class="title">Sign In</h2>
+                <div class="input-field">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="email" placeholder="Email" required />
+                </div>
+                <div class="input-field">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Password" required />
+                </div>
+                <a href="/forgot_password" class="forgot-password-link">Forgot Password?</a> <!-- Forgot password link -->
+                <input type="submit" name="login" value="Login" class="btn solid" />
+            
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            {% if category == 'error' %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                                    <strong style="color: tomato;">Error: {{ message }}</strong> 
+                                </div>
+                            {% elif category == 'success' %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                                    <strong style="color: forestgreen;">{{ message }}</strong> 
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </form>
+            
+            
+  
+            <form action="/applicant_login" method="post" class="sign-up-form">
+  
+              <h2 class="title">Sign Up</h2>
+             
+  
+              <label  style="">Signing up as Applicant</label>
+        
+              <div class="" style="display: flex; align-items: center;">
+                  <label style="display: inline-block; margin-right: 15px; cursor: pointer; font-size: 16px; color: #333;">
+                      <input hidden checked type="radio" name="user_type" value="applicant" required />
+                  </label>
+              </div>
+              
+              <div class="input-field">
+                  <i class="fas fa-user"></i>
+                  <input type="text" name="name" placeholder="Username" required />
+              </div>
+
+              
+              <div class="input-field">
+                <i class="fas fa-user"></i>
+                <input type="text" name="firstname" placeholder="First name" required />
+            </div>
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input type="text" name="lastname" placeholder="Last name" required />
+            </div>
+              <div class="input-field">
+                  <i class="fas fa-envelope"></i>
+                  <input type="email" name="email" placeholder="Email" required />
+              </div>
+            
+              <div class="input-field">
+                  <i class="fas fa-lock"></i>
+                  <input id="passwordInput" type="password" name="password" placeholder="Password" required />
+              </div>
+              <div class="input-field">
+                  <i class="fas fa-lock"></i>
+                  <input id="confirmPasswordInput" type="password" name="confirm_password" placeholder="Confirm Password" required />
+                  
+              </div>
+  
+     <span class="error-message" id="passwordError"></span>
+        
+  
+              <input type="submit" name="signup" value="Sign Up" class="btn solid" id="signupButton" disabled />
+              <a href="/login-signup" class="">Want to be an Employer? Click here!</a>
+          </form>
+  
+          </div>
+        </div>
+        <div class="panels-container">
+  
+          <div class="panel left-panel">
+              <div class="content">
+                  <h3>New here?</h3>
+                  <p>You are one step closer to finding the right job to match your skills!</p>
+                  <button class="btn transparent" id="sign-up-btn">Sign Up</button>
+              </div>
+              <img src="static/loginsignupimg/log.svg" class="image" alt="">
+          </div>
+  
+          <div class="panel right-panel">
+              <div class="content">
+                  <h3>Have an account?</h3>
+                  <p>The place where jobseekers and employers converge online</p>
+                  <button class="btn transparent" id="sign-in-btn">Sign In</button>
+              </div>
+              <img src="static/loginsignupimg/register.svg" class="image" alt="">
+          </div>
+        </div>
+      </div>
+
+<script src="static/app.js"></script>
+
+</body>
+</html>

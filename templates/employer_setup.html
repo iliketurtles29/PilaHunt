@@ -1,0 +1,319 @@
+{% extends 'employerheader_base.html' %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            {% if category == 'error' %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                    <strong>Error:</strong> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<link rel="stylesheet" href="static/admin_assets/vendor/css/core.css" class="template-customizer-core-css" />
+<link rel="stylesheet" href="static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+<link rel="stylesheet" href="static/admin_assets/vendor/fonts/boxicons.css" />
+<div class="container">
+    <div class="row gutters">
+        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-60">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="account-settings">
+                        <div class="user-profile">
+                            <div class="user-avatar" onclick="triggerFileInput()">
+                                {% if employer.company_logo %}
+                                    <img id="companyLogo" src="data:image/jpeg;base64,{{ employer.company_logo }}" style="height: 280px; width: 280px;" alt="User Profile">
+                                {% else %}
+                                    <img id="companyLogo" src="static/companydefault.png" style="height: 280px; width: 280px;" alt="User Profile">
+                                {% endif %}
+                            </div>
+                            <form id="changeLogoForm" action="/change_logo" method="post" enctype="multipart/form-data">
+                                <input type="file" id="fileInput" name="company_logo" style="display: none;" accept="image/*" onchange="uploadLogo()">
+                                <div class="mt-2">
+                                    <label for="fileInput" style="margin-left: 30px;" class="genric-btn primary-border small">
+                                        <i class="fa fa-fw fa-camera"></i>
+                                        <span>Change Photo</span>
+                                    </label>
+                                </div>
+                                <button type="submit" style="display: none;">Submit</button>
+                            </form>
+                            <h5 style="margin-top: 40px;" class="user-name">{{ employer.company_name }}</h5>
+                            <h6 class="user-email">{{ user.email  }}</h6>
+                        </div>
+                        <!-- <div class="about" style="margin-top: 40px;">
+                            <h5>About</h5>
+                            <p>I'm Jolibee. Full Stack Designer I enjoy creating user-centric, delightful and human experiences.</p>
+                        </div>-->
+                        <script>
+
+                            function triggerFileInput() {
+                                document.getElementById('fileInput').click();
+                            }
+
+                            function uploadLogo() {
+                                document.getElementById('changeLogoForm').submit();
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="margin-bottom: 20px;">
+                            <b>Company Accont Set-Up</b>
+                        </div>
+                    </div>
+                    <form class="form-contact contact_form" action="/setup_account" method="post" id="" novalidate="novalidate">
+                        <div class="row gutters">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="tin">Tin ID</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            <i class='bx bx-id-card'></i></span>
+                                    <input type="number" name="tin_id" class="form-control" id="tin" placeholder="{{ employer.tin_id }}" value="{{ employer.tin_id }}">
+                                    <input type="hidden" name="original_tin_id" value="{{ employer.tin_id }}">
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="name">Company Name</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            <i class='bx bx-building' ></i></span>
+                                    <input type="text" name="company_name"class="form-control" id="name" placeholder="{{ employer.company_name }}" value="{{ employer.company_name }}"  required>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="address">Company Address</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            <i class='bx bx-pin' ></i></span>
+                                    <input type="text" name="company_address"class="form-control" id="address" placeholder="{{ employer.company_address }}" value="{{ employer.company_address }}" required>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="trade">Trade Name</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            ™ </span>
+                                    <input type="url"  name="trade_name" class="form-control" id="website" placeholder="{{ employer.trade_name }}" value ="{{ employer.trade_name }}" required>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="employer_type">Employer Type</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            <i class='bx bx-buildings'></i></span>
+                                    <select name="employer_type" style="border: 1px solid #ccc !important; display: block; width: 100%;" class="form-control" required>
+                                        <option value="" disabled>Select employer type</option>
+                                        <option value="public" {% if employer.employer_type == 'public' %} selected {% endif %}>Public</option>
+                                        <option value="private" {% if employer.employer_type == 'private' %} selected {% endif %}>Private</option>
+                                    </select>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="business_type">Business Type</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            <i class='bx bx-buildings'></i></span>
+                                    <select name="business_type" style="border: 1px solid #ccc !important; display: block; width: 100%;" class="form-control" required>
+                                        <option value="" disabled>Select Business type</option>
+                                        <option value="public" {% if employer.business_type == 'public' %} selected {% endif %}>Public</option>
+                                        <option value="private" {% if employer.business_type == 'private' %} selected {% endif %}>Private</option>
+                                    </select>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="contact">Contact Person</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            <i class='bx bxs-contact' ></i></span>
+                                    <input type="text" name="contact_person" class="form-control" id="contact" placeholder="{{ employer.contact_person }}" value="{{ employer.contact_person }}" required>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="position">Position</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            <i class='bx bx-briefcase-alt' ></i></span>
+                                    <input type="text" name="position" class="form-control" id="position" placeholder="{{ employer.position }}" value="{{ employer.position }}" required>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="number">Phone number</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            <i class='bx bx-phone' ></i></span>
+                                    <input type="number"name="phone_no" class="form-control" id="number" placeholder="{{ employer.phone_no }}" value="{{ employer.phone_no }}" required>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-phone2" class="input-group-text">
+                                            <i class="bx bx-envelope"></i></span>
+                                    <input type="email" name="email_add" disabled class="form-control" id="position" placeholder=" {{ employer.email_add }}" value=" {{ employer.email_add}}" required>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row gutters">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="text-right">
+                                    <button type="button" id="openModalBtn" class="genric-btn primary">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="confirmationModalLabel">Confirm Changes</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        By Clicking Confirm your Account wil be reviewed again by the PESO. Are you sure you want to Update?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <button type="submit" id="confirmChangesBtn" class="btn btn-primary">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            document.getElementById('openModalBtn').addEventListener('click', function() {
+                                $('#confirmationModal').modal('show');
+                            });
+                    
+                            document.getElementById('confirmChangesBtn').addEventListener('click', function() {
+                                document.getElementById('setupAccountForm').submit();
+                            });
+                        </script>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <!-- Footer Start-->
+    <div class="footer-area footer-bg" style="padding-top: 50px;">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+               
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-tittle">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li>
+                                <p>Address :Your address goes
+                                    here, your demo address.</p>
+                                </li>
+                                <li><a href="#">Phone : 09216170786</a></li>
+                                <li><a href="#">Email : pesopila@gmail.com</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+           
+            </div>
+           <!--  -->
+    
+        </div>
+    </div>
+    <!-- footer-bottom area -->
+    <div class="footer-bottom-area footer-bg">
+        <div class="container">
+            <div class="footer-border">
+                 <div class="row d-flex justify-content-between align-items-center">
+                     <div class="col-xl-10 col-lg-10 ">
+                         <div class="footer-copy-right">
+                             <p>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+</p>
+                         </div>
+                     </div>
+                     <div class="col-xl-2 col-lg-2">
+                         <div class="footer-social f-right">
+                             <a href="#"><i class="fab fa-facebook-f"></i></a>
+                             <a href="#"><i class="fab fa-twitter"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End-->
+</footer>
+</div>
+</div>
+<!-- All JS Custom Plugins Link Here here -->
+<script src="static/assets/js/vendor/modernizr-3.5.0.min.js"></script>
+<!-- Jquery, Popper, Bootstrap -->
+<script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script>
+<script src="static/assets/js/popper.min.js"></script>
+<script src="static/assets/js/bootstrap.min.js"></script>
+<!-- Jquery Mobile Menu -->
+<script src="static/assets/js/jquery.slicknav.min.js"></script>
+
+<!-- Jquery Slick , Owl-Carousel Range -->
+<script src="static/assets/js/owl.carousel.min.js"></script>
+<script src="static/assets/js/slick.min.js"></script>
+<script src="static/assets/js/price_rangs.js"></script>
+<!-- One Page, Animated-HeadLin -->
+<script src="static/assets/js/wow.min.js"></script>
+<script src="static/assets/js/animated.headline.js"></script>
+<script src="static/assets/js/jquery.magnific-popup.js"></script>
+
+<!-- Scrollup, nice-select, sticky -->
+<script src="static/assets/js/jquery.scrollUp.min.js"></script>
+<script src="static/assets/js/jquery.nice-select.min.js"></script>
+<script src="static/assets/js/jquery.sticky.js"></script>
+
+<!-- contact js -->
+<script src="static/assets/js/contact.js"></script>
+<script src="static/assets/js/jquery.form.js"></script>
+<script src="static/assets/js/jquery.validate.min.js"></script>
+<script src="static/assets/js/mail-script.js"></script>
+<script src="static/assets/js/jquery.ajaxchimp.min.js"></script>
+
+<!-- Jquery Plugins, main Jquery -->	
+<script src="static/assets/js/plugins.js"></script>
+<script src="static/assets/js/main.js"></script>
+
+</body>
+{% endblock %}

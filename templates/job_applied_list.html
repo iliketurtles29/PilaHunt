@@ -1,0 +1,238 @@
+{% extends 'header_base.html' %}
+
+{% block content %}
+
+	<!-- Hero Area Start-->
+	<div class="slider-area ">
+		<div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="assets/img/hero/about.jpg">
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-12">
+						<div class="hero-cap text-center">
+							<h2>Jobs You Applied</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            {% if category == 'success' %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                    <strong>Success:</strong> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<style>
+    .progress-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    .progress-table {
+        width: 100%;
+        display: table;
+        table-layout: fixed;
+    }
+    
+    .table-head, .table-row {
+        display: table-row;
+    }
+    
+    .serial, .action {
+        display: table-cell;
+        padding: 10px;
+        text-align: left;
+    }
+    
+    .serial-small {
+        width: 5%; /* Adjust this width to be minimal */
+    }
+    
+    .table-head .serial, .table-row .serial {
+        width: 20%;
+    }
+    
+    .table-head .serial-small, .table-row .serial-small {
+        width: 5%; /* Ensure this is minimal */
+    }
+    
+    .action {
+        width: 20%;
+        text-align: center;
+    }
+    
+
+    
+    </style>
+<div class="whole-wrap">
+    <div class="container box_1170">
+        <div class="section-top-border">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="mb-30">Your Job Applications</h3>
+                <div>
+                    <button class="genric-btn info radius" onclick="filterApplications('Approved')">Approved</button>
+                    <button class="genric-btn success radius" onclick="filterApplications('Pending')">Pending</button>
+                    <button class="genric-btn warning radius" onclick="filterApplications('Under Review')">Under Review</button>
+                    <button class="genric-btn danger radius" onclick="filterApplications('Rejected')">Rejected</button>
+                    <button class="genric-btn primary radius" onclick="filterApplications('All')">All</button>
+                </div>
+            </div>
+        
+            <div class="card">
+                <h5 class="card-header">Job Applications</h5>
+                <div class="table-responsive text-nowrap">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Company Name</th>
+                                <th>Job Applied</th>
+                                <th>Date Applied</th>
+                                <th>Application Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                            {% for application in applications %}
+                            <tr class="application-row" data-status="{{ application.application_status }}">
+                                <td>{{ loop.index }}</td>
+                                <td>{{ application.company_applied }}</td>
+                                <td>{{ application.position_applied }}</td>
+                                <td>{{ application.application_date.strftime("%B %d, %Y %I:%M %p") }}</td>
+                                <td>{{ application.application_status }}</td>
+                                <td>
+                                    <a class="genric-btn primary radius" href="{{ url_for('view_application', application_id=application.application_id) }}">
+                                        View Job Application
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+
+        </div>
+        
+        <script>
+            function filterApplications(status) {
+                var rows = document.querySelectorAll('.application-row');
+                rows.forEach(function(row) {
+                    if (status === 'All') {
+                        row.style.display = 'table-row';
+                    } else if (row.getAttribute('data-status') === status) {
+                        row.style.display = 'table-row';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+            
+        </script>
+        
+        
+    </div>
+</div>
+
+
+<footer>
+    <!-- Footer Start-->
+    <div class="footer-area footer-bg" style="padding-top: 50px;">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+               
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-tittle">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li>
+                                <p>Address :Your address goes
+                                    here, your demo address.</p>
+                                </li>
+                                <li><a href="#">Phone : 09216170786</a></li>
+                                <li><a href="#">Email : pesopila@gmail.com</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+           
+            </div>
+           <!--  -->
+    
+        </div>
+    </div>
+    <!-- footer-bottom area -->
+    <div class="footer-bottom-area footer-bg">
+        <div class="container">
+            <div class="footer-border">
+                 <div class="row d-flex justify-content-between align-items-center">
+                     <div class="col-xl-10 col-lg-10 ">
+                         <div class="footer-copy-right">
+                             <p>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+</p>
+                         </div>
+                     </div>
+                     <div class="col-xl-2 col-lg-2">
+                         <div class="footer-social f-right">
+                             <a href="#"><i class="fab fa-facebook-f"></i></a>
+                             <a href="#"><i class="fab fa-twitter"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End-->
+</footer>
+	
+<!-- JS here -->
+		<!-- All JS Custom Plugins Link Here here -->
+		<!-- <script src="./assets/js/bootstrap.bundle.min.js"></script> -->
+        <script src="static/assets/js/vendor/modernizr-3.5.0.min.js"></script>
+		<!-- Jquery, Popper, Bootstrap -->
+		<script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script>
+        <script src="static/assets/js/popper.min.js"></script>
+        <script src="static/assets/js/bootstrap.min.js"></script>
+	    <!-- Jquery Mobile Menu -->
+        <script src="static/assets/js/jquery.slicknav.min.js"></script>
+
+		<!-- Jquery Slick , Owl-Carousel Plugins -->
+        <script src="static/assets/js/owl.carousel.min.js"></script>
+		<script src="static/assets/js/slick.min.js"></script>
+		<script src="static/assets/js/price_rangs.js"></script>
+		
+		<!-- One Page, Animated-HeadLin -->
+        <script src="static/assets/js/wow.min.js"></script>
+		<script src="static/assets/js/animated.headline.js"></script>
+		<script src="static/assets/js/jquery.magnific-popup.js"></script>
+		
+		<!-- Scrollup, nice-select, sticky -->
+        <script src="static/assets/js/jquery.scrollUp.min.js"></script>
+        <script src="static/assets/js/jquery.nice-select.min.js"></script>
+		<script src="static/assets/js/jquery.sticky.js"></script>
+        
+        <!-- contact js -->
+        <script src="static/assets/js/contact.js"></script>
+        <script src="static/assets/js/jquery.form.js"></script>
+        <script src="static/assets/js/jquery.validate.min.js"></script>
+        <script src="static/assets/js/mail-script.js"></script>
+        <script src="static/assets/js/jquery.ajaxchimp.min.js"></script>
+        
+		<!-- Jquery Plugins, main Jquery -->	
+        <script src="static/assets/js/plugins.js"></script>
+        <script src="static/assets/js/main.js"></script>
+        
+</body>
+{% endblock %}

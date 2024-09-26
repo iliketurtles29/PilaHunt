@@ -1,0 +1,244 @@
+{% extends 'spes-header-base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="static/admin_assets/vendor/css/core.css" class="template-customizer-core-css" />
+<link rel="stylesheet" href="static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+<link rel="stylesheet" href="static/admin_assets/vendor/fonts/boxicons.css" />
+<div class="container">
+    <div class="row gutters">
+        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-60">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="account-settings">
+                        <div class="user-profile">
+                            <div class="user-avatar" onclick="triggerFileInput()">
+                                {% if spes.spes_profile_pic %}
+                                    <img id="companyLogo" src="data:image/jpeg;base64,{{ spes.spes_profile_pic  }}" style="height: 300px; width: 280px;" alt="User Profile">
+                                {% else %}
+                                    <img id="companyLogo" src="static/user.png" style="height: 290px; width: 275px;"  alt="User Profile">
+                                {% endif %}
+                            </div>
+                            <form id="changeLogoForm" action="/spes_change_profile" method="post" enctype="multipart/form-data">
+                                <input type="file" id="fileInput" name="spes_profile_pic" style="display: none;" accept="image/*" onchange="uploadLogo()">
+                                <div class="mt-2">
+                                    <label for="fileInput" style="margin-left: 50px;" class="genric-btn primary-border small">
+                                        <i class="fa fa-fw fa-camera"></i>
+                                        <span>Change Photo</span>
+                                    </label>
+                                </div>
+                                <button type="submit" style="display: none;">Submit</button>
+                            </form>
+                            
+                          
+                            <a class="genric-btn primary" href="/spes_profile" style="display: block; text-align: center; margin-top: 10px;">Back</a>
+                        </div>
+                        <!--<div class="about" style="margin-top: 40px;">
+                            <h5>About</h5>
+                            <p>I'm Jolibee. Full Stack Designer I enjoy creating user-centric, delightful and human experiences.</p>
+                        </div>-->
+                        <script>
+
+                            function triggerFileInput() {
+                                document.getElementById('fileInput').click();
+                            }
+
+                            function uploadLogo() {
+                                document.getElementById('changeLogoForm').submit();
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+<div class="card h-100">
+	<div class="card-body">
+        <form class="form-contact contact_form" action="{{ url_for('upload_documents') }}" method="post" id="setupAccountForm" enctype="multipart/form-data" novalidate="novalidate">
+            <div class="row gutters">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="margin-bottom: 20px;">
+                    <b>Required Documents</b> <span style="color:tomato;">Note: Upload your Requirements in PDF Format for reviewing</span>
+                    <div class="row" style="margin-top: 20px; border: 1px solid #ccc !important">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="resume">Upload SPES Form</label>
+                                <input style="margin-bottom: 10px;" type="file" class="form-control-file" id="resume" name="resume" required accept=".pdf">
+                                {% if uploaded_resume %}
+                               
+                                {% else %}
+                                    <p>If you dont have it yet. Generate form <a href="/spes_profile">here</a></p>
+                                {% endif%}
+
+                            
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row" style="margin-top: 20px; border: 1px solid #ccc !important">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="birth_certificate">Upload Birth Certificate</label>
+                                <input style="margin-bottom: 10px;" type="file" class="form-control-file" id="birth_certificate" name="birth_certificate" required accept=".pdf">
+                                {% if uploaded_birth_certificate %}
+                               
+                                {% else %}
+                                    
+                                {% endif %}
+
+                            
+
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row" style="margin-top: 20px; border: 1px solid #ccc !important">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="grades">Upload Grades</label>
+                                <input style="margin-bottom: 10px;" type="file" class="form-control-file" id="grades" name="grades" required accept=".pdf">
+                                {% if uploaded_grades %}
+                              
+                                {% else %}
+                                    
+                                {% endif %}
+
+
+                            
+                            </div>
+
+    
+                            
+                            
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            
+            
+    <div class="row gutters">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="margin-bottom: 10px;">
+            <div class="text-right">
+                <button type="submit" class="genric-btn primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    <b style="margin-top: 10px;" for="grades">SPES Form</b>
+            <iframe src="data:application/pdf;base64,{{ uploaded_resume }}" frameborder="0" width="100%" height="500px" style="margin-bottom: 30px;"></iframe>
+            <b style="margin-top: 10px;" for="grades">Birth Certificate</b>
+            <iframe src="data:application/pdf;base64,{{ uploaded_birth_certificate }}" frameborder="0" width="100%" height="500px" style="margin-bottom: 30px;"></iframe>
+            <b style="margin-top: 10px;" for="grades">Grades</b>
+            <iframe src="data:application/pdf;base64,{{ uploaded_grades }}" frameborder="0" width="100%" height="500px" style="margin-bottom: 30px;"></iframe>
+
+    
+</form>
+
+	</div>
+</div>
+</div>
+</div>
+</div>
+
+<footer>
+    <!-- Footer Start-->
+    <div class="footer-area footer-bg" style="padding-top: 50px;">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+               
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-tittle">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li>
+                                <p>Address :Your address goes
+                                    here, your demo address.</p>
+                                </li>
+                                <li><a href="#">Phone : 09216170786</a></li>
+                                <li><a href="#">Email : pesopila@gmail.com</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+           
+            </div>
+           <!--  -->
+    
+        </div>
+    </div>
+    <!-- footer-bottom area -->
+    <div class="footer-bottom-area footer-bg">
+        <div class="container">
+            <div class="footer-border">
+                 <div class="row d-flex justify-content-between align-items-center">
+                     <div class="col-xl-10 col-lg-10 ">
+                         <div class="footer-copy-right">
+                             <p>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+</p>
+                         </div>
+                     </div>
+                     <div class="col-xl-2 col-lg-2">
+                         <div class="footer-social f-right">
+                             <a href="#"><i class="fab fa-facebook-f"></i></a>
+                             <a href="#"><i class="fab fa-twitter"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End-->
+</footer>
+
+</div>
+</div>
+<!-- All JS Custom Plugins Link Here here -->
+<script src="static/assets/js/vendor/modernizr-3.5.0.min.js"></script>
+<!-- Jquery, Popper, Bootstrap -->
+<script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script> <!-- Keep this line -->
+<script src="static/assets/js/popper.min.js"></script>
+<script src="static/assets/js/bootstrap.min.js"></script>
+<!-- Jquery Mobile Menu -->
+<script src="static/assets/js/jquery.slicknav.min.js"></script>
+
+<!-- Jquery Slick , Owl-Carousel Range -->
+<script src="static/assets/js/owl.carousel.min.js"></script>
+<script src="static/assets/js/slick.min.js"></script>
+<script src="static/assets/js/price_rangs.js"></script>
+<!-- One Page, Animated-HeadLin -->
+<script src="static/assets/js/wow.min.js"></script>
+<script src="static/assets/js/animated.headline.js"></script>
+<script src="static/assets/js/jquery.magnific-popup.js"></script>
+
+<!-- Scrollup, nice-select, sticky -->
+<script src="static/assets/js/jquery.scrollUp.min.js"></script>
+<script src="static/assets/js/jquery.nice-select.min.js"></script>
+<script src="static/assets/js/jquery.sticky.js"></script>
+
+<!-- Bootstrap Datepicker -->
+
+
+<!-- contact js -->
+<script src="static/assets/js/contact.js"></script>
+<script src="static/assets/js/jquery.form.js"></script>
+<script src="static/assets/js/jquery.validate.min.js"></script>
+<script src="static/assets/js/mail-script.js"></script>
+<script src="static/assets/js/jquery.ajaxchimp.min.js"></script>
+
+<!-- Jquery Plugins, main Jquery -->	
+<script src="static/assets/js/plugins.js"></script>
+<script src="static/assets/js/main.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+$(document).ready(function(){
+    $('#datepicker').datepicker({
+        format: 'mm/dd/yyyy'  // Specify the format here
+    });
+});
+</script>
+</body>
+
+{% endblock %}

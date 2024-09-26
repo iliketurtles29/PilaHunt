@@ -1,0 +1,335 @@
+{% extends 'spes-header-base.html' %}
+{% block content %}
+<link rel="stylesheet" href="static/assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="static/assets/css/owl.carousel.min.css">
+<link rel="stylesheet" href="static/assets/css/flaticon.css">
+<link rel="stylesheet" href="static/assets/css/price_rangs.css">
+<link rel="stylesheet" href="static/assets/css/slicknav.css">
+<link rel="stylesheet" href="static/assets/css/animate.min.css">
+<link rel="stylesheet" href="static/assets/css/magnific-popup.css">
+<link rel="stylesheet" href="static/assets/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="static/assets/css/themify-icons.css">
+<link rel="stylesheet" href="static/assets/css/slick.css">
+<link rel="stylesheet" href="static/assets/css/nice-select.css">
+<link rel="stylesheet" href="static/assets/css/style.css">
+<link rel="stylesheet" href="static/admin_assets/vendor/css/core.css" class="template-customizer-core-css" />
+<link rel="stylesheet" href="static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+<link rel="stylesheet" href="static/admin_assets/vendor/fonts/boxicons.css" />
+<link href='static/assets/main.min.css' rel='stylesheet' />
+<script src="static/assets/main.min.js"></script>
+<script src="static/assets/popper.min.js"></script>
+<link href="static/assets/2popper.min.js" rel="stylesheet">
+<script src="static/assets/tooltip.min.js"></script>
+
+<main>
+    <style>
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+            height: 500px;
+            
+        }
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .task-list li {
+            background-color: #ffffff;
+            margin-bottom: 5px;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .task-list li:last-child {
+            margin-bottom: 0;
+        }
+        .task-title {
+            font-weight: bold;
+        }
+        .calendar-container {
+            margin-top: 20px;
+        }
+    </style>
+
+    <div class="job-post-company pt-60 pb-60">
+        <div class="container">
+                
+            <div class="row justify-content-between">
+                <!-- Left Content -->
+                <div id='calendar'></div>
+                <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="eventModalLabel">Task Details</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="modalTitle"></p>
+                                <p id="modalDescription"></p>
+                                <p id="modalStatus"></p>
+                                <p>Please upload your accomplishment report in PDF format using the file input box below.</p>
+                                <form id="completeTaskForm" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <label for="taskFile">Upload File</label>
+                                        <input type="file" class="form-control" id="taskFile" name="taskFile" required>
+                                    </div>
+                                    <input type="hidden" id="taskId" name="taskId">
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="genric-btn primary" form="completeTaskForm" id="submitBtn">Submit</button>
+
+                                
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var calendarEl = document.getElementById('calendar');
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'dayGridMonth',
+                            events: {{ tasks|tojson }},
+                            locale: 'en',
+                            eventDidMount: function(info) {
+                                new Tooltip(info.el, {
+                                    title: info.event.extendedProps.description,
+                                    placement: 'top',
+                                    trigger: 'hover',
+                                    container: 'body'
+                                });
+                            },
+                            eventClick: function(info) {
+                                $('#modalTitle').text('Task: ' + info.event.title);
+                                $('#modalDescription').text('Description: ' + info.event.extendedProps.description);
+                                $('#modalStatus').text('Status: ' + info.event.extendedProps.status);
+                                $('#taskId').val(info.event.id);  // Ensure the task ID is set here
+                                
+                                // Log the task ID for debugging
+                                console.log('Task ID:', info.event.id);
+                    
+                                // Disable submit button and change text if task is completed
+                                if (info.event.extendedProps.status === 'Completed') {
+                                    $('#submitBtn').prop('disabled', true).text('Already Completed');
+                                } else {
+                                    $('#submitBtn').prop('disabled', false).text('Submit');
+                                }
+                                
+                                $('#eventModal').modal('show');
+                            },
+                            headerToolbar: {
+                                left: 'prev,next today',
+                                center: 'title',
+                                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                            },
+                            eventTimeFormat: {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                meridiem: 'short'
+                            },
+                            eventsSet: function(events) {
+                                events.forEach(function(event) {
+                                    event.backgroundColor = event.extendedProps.backgroundColor;
+                                    event.borderColor = event.extendedProps.borderColor;
+                                });
+                            }
+                        });
+                        calendar.render();
+                    
+                        $('#completeTaskForm').submit(function(e) {
+                            e.preventDefault();
+                            var formData = new FormData(this);
+                            formData.append('taskId', $('#taskId').val());  // Add task ID to FormData
+                    
+                            // Log taskId for debugging
+                            console.log('Task ID:', $('#taskId').val());
+                    
+                            $.ajax({
+                                type: 'POST',
+                                url: '/complete_task',
+                                data: formData,
+                                contentType: false,
+                                processData: false,
+                                success: function(response) {
+                                    alert('Task updated successfully!');
+                                    $('#eventModal').modal('hide');
+                                    calendar.refetchEvents();
+                                    location.reload();
+                                    
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(xhr.responseText);
+                                    alert('Failed to update task. Error: ' + error);
+                                }
+                            });
+                        });
+                    });
+                              
+                </script>
+                
+                
+                <!-- Right Content -->
+                <div class="col-xl-4 col-lg-4">
+                    <div class="post-details3  mb-50">
+                        <!-- Small Section Tittle -->
+                       <div class="small-section-tittle">
+                           <h4>Job Overview</h4>
+                       </div>
+                      <ul>
+                        <li>Contact Person : <span>Jayson D. Palasin</span></li>
+                        <li>Contact : <span>0999999999</span></li>
+                        <li>Email : <span>pesopila@gmail.com</span></li>
+                       
+                          
+                      </ul>
+                      {% if tasks %}
+                        <span style="color:coral;">Pending Tasks: {{ pending_count }}</span><br>
+                        
+                        {% if formatted_due_dates %}
+                            <span style="color:coral;">Due Dates:</span><br>
+                            {% for date in formatted_due_dates %}
+                                {{ date }}<br>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        {% if past_due_dates %}
+                            <span style="color:red;">Past Due Dates:</span><br>
+                            {% for date in past_due_dates %}
+                                {{ date }}<br>
+                            {% endfor %}
+                        {% endif %}
+                        
+                    {% else %}
+                        <p>No tasks assigned.</p>
+                    {% endif %}
+
+                  
+                   </div>
+                   <div class="post-details4 mb-50">
+                    <!--<div class="small-section-tittle">
+                        <h4>View Company Via Google Map</h4>
+                    </div>-->
+                    <p></p>
+                    <iframe
+                        width="375"
+                        height="300"
+                        style="border:0; margin-bottom: 15px;"
+                        loading="lazy"
+                        allowfullscreen
+                        src="">
+                    </iframe>
+                 
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- job post company End -->
+    
+
+</main>
+<footer>
+    <!-- Footer Start-->
+    <div class="footer-area footer-bg" style="padding-top: 50px;">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+               
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-tittle">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li>
+                                <p>Address :Your address goes
+                                    here, your demo address.</p>
+                                </li>
+                                <li><a href="#">Phone : 09216170786</a></li>
+                                <li><a href="#">Email : pesopila@gmail.com</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+           
+            </div>
+           <!--  -->
+    
+        </div>
+    </div>
+    <!-- footer-bottom area -->
+    <div class="footer-bottom-area footer-bg">
+        <div class="container">
+            <div class="footer-border">
+                 <div class="row d-flex justify-content-between align-items-center">
+                     <div class="col-xl-10 col-lg-10 ">
+                         <div class="footer-copy-right">
+                             <p>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+</p>
+                         </div>
+                     </div>
+                     <div class="col-xl-2 col-lg-2">
+                         <div class="footer-social f-right">
+                             <a href="#"><i class="fab fa-facebook-f"></i></a>
+                             <a href="#"><i class="fab fa-twitter"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End-->
+</footer>
+
+<!-- JS here -->
+
+    <!-- All JS Custom Plugins Link Here here -->
+    <script src="{{ url_for('static', filename='assets/js/vendor/modernizr-3.5.0.min.js') }}"></script>
+    <!-- Jquery, Popper, Bootstrap -->
+    <script src="{{ url_for('static', filename='assets/js/vendor/jquery-1.12.4.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
+    <!-- Jquery Mobile Menu -->
+    <script src="{{ url_for('static', filename='assets/js/jquery.slicknav.min.js') }}"></script>
+    
+    <!-- Jquery Slick, Owl-Carousel Plugins -->
+    <script src="{{ url_for('static', filename='assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/slick.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/price_rangs.js') }}"></script>
+    
+    <!-- One Page, Animated-HeadLin -->
+    <script src="{{ url_for('static', filename='assets/js/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/animated.headline.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.magnific-popup.js') }}"></script>
+     <!--  <script src="{{ url_for('static', filename='assets/js/main.min.js') }}"></script> -->
+    
+    <!-- Scrollup, nice-select, sticky -->
+    <script src="{{ url_for('static', filename='assets/js/jquery.scrollUp.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.nice-select.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+    
+    <!-- Contact js -->
+    <script src="{{ url_for('static', filename='assets/js/contact.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.form.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.validate.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/mail-script.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.ajaxchimp.min.js') }}"></script>
+    
+    <!-- Jquery Plugins, main Jquery -->
+    <script src="{{ url_for('static', filename='assets/js/plugins.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
+    
+    
+</body>
+{% endblock %}

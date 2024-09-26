@@ -1,0 +1,84 @@
+{% extends 'spes-base.html' %}
+
+{% block content %}
+<script src="static/admin_assets/vendor/js/helpers.js"></script>
+
+<!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+<!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+<script src="static/admin_assets/js/config.js"></script>
+    <!-- Helpers -->
+    <script src="../assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="../assets/js/config.js"></script>
+  </head>
+
+  <body>
+    <!-- Content -->
+
+    <div class="container-xxl">
+      <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+          <!-- Register Card -->
+          <div class="card">
+            <div class="card-body">
+              <!-- Logo -->
+              <div class="app-brand justify-content-center">
+            
+              </div>
+              <!-- /Logo -->
+              <h4 class="mb-2">Verify email</h4>
+              <p>Enter the code sent to your email</p>
+
+              <form id="formAuthentication" class="mb-3" action="/spes_verify" method="POST">
+                <div class="mb-3">
+                  <label for="verification_code" class="form-label">Enter Code</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="verification_code"
+                    name="verification_code"
+                    placeholder="Verification code"
+                    autofocus
+                  />
+                </div>
+                {% if error %}
+            <span class="error-message" style="color: crimson;">{{ error }}</span>
+        {% endif %}
+                <button class="btn btn-primary d-grid w-100" type="submit" name="verify" value="Verify">Verify</button>
+              </form>
+
+            </div>
+          </div>
+          <!-- Register Card -->
+        </div>
+      </div>
+    </div>
+
+    <!-- / Content -->
+
+
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="../assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+
+    <!-- Main JS -->
+    <script src="../assets/js/main.js"></script>
+
+    <!-- Page JS -->
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>
+{% endblock %}

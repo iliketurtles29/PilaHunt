@@ -1,0 +1,341 @@
+{% extends 'header_base.html' %}
+{% block content %}
+<main>
+
+    <div class="job-post-company pt-60 pb-60">
+        <div class="container">
+                
+            <div class="row justify-content-between">
+                <!-- Left Content -->
+                <div class="col-xl-7 col-lg-8">
+                    <!-- job single -->
+                    <div class="single-job-items mb-50">
+                        <div class="job-items">
+                            <div class="company-img company-img-details">
+                                <a href="#"><img src="data:image/jpeg;base64,{{ job.employer.company_logo }}" style="width: 115px; height: 115px;" alt=""></a>
+                            </div>
+                            <div class="job-tittle">
+                                <a href="#">
+                                    <h4>{{ job.company_name }} - {{ job.job_title }} </h4>
+                                </a>
+                                <ul>
+                                    <li>{{ job.company_name }}</li>
+                                    <li><i class="fas fa-map-marker-alt"></i>{{ job.job_address }}</li>
+                                    <li><i class="fa-solid fa-file-contract"></i>{{ job.job_type }}</li>
+                               
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                      <!-- job single End -->
+                   
+                    <div class="job-post-details">
+                        <div class="post-details1 mb-50">
+                            <!-- Small Section Tittle -->
+                            <div class="small-section-tittle">
+                                <h4>About Job</h4>
+                            </div>
+                            <p>{{ job.job_description }}</p>
+                        </div>
+                        <div class="post-details2  mb-50">
+                             <!-- Small Section Tittle -->
+                            <div class="small-section-tittle">
+                                <h4>Skills Required</h4>
+                            </div>
+                            <ul>
+                                {% for requirement in job.job_requirements.split(',') %}
+                                    <li>{{ requirement.strip() }}</li>
+                                {% endfor %}
+                            </ul>
+                                
+                        </div>
+                        <div class="post-details2  mb-50">
+                             <!-- Small Section Tittle -->
+                            <div class="small-section-tittle">
+                                <h4>Inclusion and Benefits</h4>
+                            </div>
+                            <ul>
+                                {% for benefit in job.job_benefits.split(',') %}
+                                    <li>{{ benefit.strip() }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Right Content -->
+                <div class="col-xl-4 col-lg-4">
+                    <div class="post-details3  mb-50">
+                        <!-- Small Section Tittle -->
+                       <div class="small-section-tittle">
+                           <h4>Job Overview</h4>
+                       </div>
+                      <ul>
+                        <li>Contact Person : <span>{{ job.employer.contact_person }}</span></li>
+                        <li>Contact : <span>{{ job.employer.phone_no }}</span></li>
+                        <li>Email : <span>{{ job.employer.email_add }}</span></li>
+                        <li>Salary : <span>Min: {{ job.salary_range_min }} - Max: {{ job.salary_range_max }}</span></li>
+                       
+                          
+                      </ul>
+                      <div class="apply-button-group">
+                        {% if 
+                            (user.phone is none or user.phone == "None") or
+                            (user.birthday is none or user.birthday == "None") or
+                            (user.gender is none or user.gender == "None") or
+                            (user.user_type is none or user.user_type == "None") or
+                            (user.user_status is none or user.user_status == "None") or
+                            (user.firstname is none or user.firstname == "None") or
+                            (user.middlename is none or user.middlename == "None") or
+                            (user.lastname is none or user.lastname == "None") or
+                            (user.suffix is none or user.suffix == "None") or
+                            (user.address is none or user.address == "None") or
+                            (user.civil_status is none or user.civil_status == "None") or
+                            (user.landline is none or user.landline == "None") or
+                            (user.tinID is none or user.tinID == "None") or
+                            (user.gsisNO is none or user.gsisNO == "None") or
+                            (user.pagibigNo is none or user.pagibigNo == "None") or
+                            (user.philNo is none or user.philNo == "None") or
+                            (user.disability is none or user.disability == "None") or
+                            (user.employmentType is none or user.employmentType == "None") or
+                            (user.employmentStatus is none or user.employmentStatus == "None") or
+                            (user.activeWork is none or user.activeWork == "None") or
+                            (user.willingToWork is none or user.willingToWork == "None") or
+                            (user.porPs is none or user.porPs == "None") or
+                            (user.prefoccupation is none or user.prefoccupation == "None") or
+                            (user.preflocation is none or user.preflocation == "None") or
+                            (user.salary is none or user.salary == "None") or
+                            (user.passportNo is none or user.passportNo == "None") or
+                            (user.passportExp is none or user.passportExp == "None") or
+                            (user.elemschool is none or user.elemschool == "None") or
+                            (user.yearGradElem is none or user.yearGradElem == "None") or
+                            (user.secondarySchool is none or user.secondarySchool == "None") or
+                            (user.yearGradSec is none or user.yearGradSec == "None") or
+                            (user.terSchool is none or user.terSchool == "None") or
+                            (user.courseTer is none or user.courseTer == "None") or
+                            (user.yearGradTer is none or user.yearGradTer == "None") or
+                            (user.gradSchool is none or user.gradSchool == "None") or
+                            (user.courseGrad is none or user.courseGrad == "None") or
+                            (user.yearGradGrad is none or user.yearGradGrad == "None") or
+                            (user.skills is none or user.skills == "None") or
+                            (user.disabilityothers is none or user.disabilityothers == "None") or
+                            (user.country is none or user.country == "None") or
+                            (user.unemployedOthers is none or user.unemployedOthers == "None") or
+                            (user.howlongwork is none or user.howlongwork == "None") or
+                            (user.workimme is none or user.workimme == "None") or
+                            (user.otherskills is none or user.otherskills == "None") or
+                            (user.profile_pic is none or user.profile_pic == "None")
+                        %}
+                            <!-- If any field or profile picture is missing -->
+                            <a type="button" href="/user_profile" class="genric-btn primary" data-toggle="modal" data-target="#editProfileModal">
+                                Complete profile to apply
+                            </a>
+                        {% else %}
+                            <!-- If all fields are filled and profile picture is uploaded -->
+                            {% if user.profile_pic is none or user.profile_pic == "None" %}
+                                <!-- Profile picture is not uploaded -->
+                                <button type="button" class="genric-btn primary" data-toggle="modal" data-target="#uploadProfilePicModal">
+                                    Upload profile picture first
+                                </button>
+                            {% else %}
+                                <!-- Profile picture is uploaded -->
+                                {% if user.workStatus in ['Under Review', 'Pending', 'Approved'] %}
+                                    <button type="button" class="genric-btn primary" data-toggle="modal" data-target="#applyModal">
+                                        Apply
+                                    </button>
+                                {% elif user.workStatus is none or user.workStatus == '' or user.jobform is none or user.jobform == '' %}
+                                    <h5>
+                                        Before you can apply for this job, you must submit the <a href="/user_profile" style="color:cadetblue;">job seeker form.</a>
+                                    </h5>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                        
+                        <div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="applyModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="applyModalLabel">Apply for the Job</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                    
+                                        <form action="/apply" method="POST" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <!-- Add file input field here -->
+                                                <label for="resume">Upload your resume:</label>
+                                                <input type="file" name="resume" id="resume" class="form-control" required>
+                                            </div>
+                                            <input type="hidden" name="job_id" value="{{ job.id }}">
+                                            <div class="form-group">
+                                                <input type="hidden" name="position_applied" value="{{ job.job_title }}">
+                                                <input type="hidden" name="company_applied" value="{{ job.employer.company_name }}">
+                                                <input type="hidden" name="company_id" value="{{ job.employer.company_id }}">
+                                                <p><strong>Are you sure you want to apply for this job?</strong></p> 
+                                            </div>
+                                            <button type="submit" class="genric-btn primary float-right">Submit</button>
+                                        </form>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="applyModalUnder" tabindex="-1" role="dialog" aria-labelledby="applyModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="applyModalLabel">Apply for the Job</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                    
+                                        <form action="/apply" method="POST" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                            </div>
+                                            <input type="hidden" name="job_id" value="{{ job.id }}">
+                                            <div class="form-group">
+                                                
+                                                <input type="hidden" name="position_applied" value="{{ job.job_title }}">
+                                                <input type="hidden" name="company_applied" value="{{ job.employer.company_name }}">
+                                                <input type="hidden" name="company_id" value="{{ job.employer.company_id }}">
+                                            
+
+
+                                                <p><bold> Your application is still {{user.workStatus}} Are you sure you want to Apply for this job?</bold></p>
+                                             
+
+                                               
+                                            </div>
+                                            <!-- Hidden input field to include the company_id -->
+                                            
+                                            <button type="submit" class="genric-btn primary float-right">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                  
+                   </div>
+                   <div class="post-details4 mb-50">
+                    <div class="small-section-tittle">
+                        <h4>View Company Via Google Map</h4>
+                    </div>
+                    <p></p>
+                    <iframe
+                        width="375"
+                        height="300"
+                        style="border:0; margin-bottom: 15px;"
+                        loading="lazy"
+                        allowfullscreen
+                        src="{{ job.gmap }}">
+                    </iframe>
+                 
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- job post company End -->
+    
+
+</main>
+<footer>
+    <!-- Footer Start-->
+    <div class="footer-area footer-bg" style="padding-top: 50px;">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+               
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-tittle">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li>
+                                <p>Address :Your address goes
+                                    here, your demo address.</p>
+                                </li>
+                                <li><a href="#">Phone : 09216170786</a></li>
+                                <li><a href="#">Email : pesopila@gmail.com</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+           
+            </div>
+           <!--  -->
+    
+        </div>
+    </div>
+    <!-- footer-bottom area -->
+    <div class="footer-bottom-area footer-bg">
+        <div class="container">
+            <div class="footer-border">
+                 <div class="row d-flex justify-content-between align-items-center">
+                     <div class="col-xl-10 col-lg-10 ">
+                         <div class="footer-copy-right">
+                             <p>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+</p>
+                         </div>
+                     </div>
+                     <div class="col-xl-2 col-lg-2">
+                         <div class="footer-social f-right">
+                             <a href="#"><i class="fab fa-facebook-f"></i></a>
+                             <a href="#"><i class="fab fa-twitter"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End-->
+</footer>
+
+<!-- JS here -->
+
+    <!-- All JS Custom Plugins Link Here here -->
+    <script src="{{ url_for('static', filename='assets/js/vendor/modernizr-3.5.0.min.js') }}"></script>
+    <!-- Jquery, Popper, Bootstrap -->
+    <script src="{{ url_for('static', filename='assets/js/vendor/jquery-1.12.4.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
+    <!-- Jquery Mobile Menu -->
+    <script src="{{ url_for('static', filename='assets/js/jquery.slicknav.min.js') }}"></script>
+    
+    <!-- Jquery Slick, Owl-Carousel Plugins -->
+    <script src="{{ url_for('static', filename='assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/slick.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/price_rangs.js') }}"></script>
+    
+    <!-- One Page, Animated-HeadLin -->
+    <script src="{{ url_for('static', filename='assets/js/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/animated.headline.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.magnific-popup.js') }}"></script>
+    
+    <!-- Scrollup, nice-select, sticky -->
+    <script src="{{ url_for('static', filename='assets/js/jquery.scrollUp.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.nice-select.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+    
+    <!-- Contact js -->
+    <script src="{{ url_for('static', filename='assets/js/contact.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.form.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.validate.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/mail-script.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.ajaxchimp.min.js') }}"></script>
+    
+    <!-- Jquery Plugins, main Jquery -->
+    <script src="{{ url_for('static', filename='assets/js/plugins.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
+    
+    
+</body>
+{% endblock %}

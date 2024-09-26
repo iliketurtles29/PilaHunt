@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pila Hunt</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico">
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="forms-container">
+        <div class="signin-signup">
+            <form action="/verify" method="post" class="sign-in-form">
+                <h2 class="title">Verify Code</h2>
+                <div class="input-field">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="verification_code" placeholder="code" required />
+                </div>
+                {% if error %}
+            <span class="error-message">{{ error }}</span>
+        {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% set latest_message = messages[-1] %}
+                        <div class="alert alert-{{ latest_message[0] }}">
+                            {{ latest_message[1] }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <input type="submit" name="verify" value="Verify" class="btn solid" />
+            </form>
+        
+        </div>
+    </div>
+    <div class="panels-container">
+        <div class="panel left-panel">
+            <div class="content">
+                <h3>Enter Verfication Code</h3>
+                <p>Please Enter the Verfication code that has been sent in your email.</p>   
+            </div>
+            <img src="static/loginsignupimg/log.svg" class="image" alt="">
+        </div>
+    </div>
+</div>
+
+<script src="static/app.js"></script>
+
+</body>
+</html>

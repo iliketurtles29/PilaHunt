@@ -1,0 +1,389 @@
+{% extends 'employerheader_base.html' %}
+{% block content %}
+<link rel="stylesheet" href="static/sweetalert2.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="static/sweetalert2@11.js"></script>
+<main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            {% if category == 'error' %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                    <strong>Error:</strong> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% elif category == 'success' %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                    <strong>Success:</strong> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+    <div class="job-post-company pt-60 pb-60">
+        <div class="container">
+                
+            <div class="row justify-content-between">
+                <!-- Left Content -->
+                <div class="col-xl-7 col-lg-8">
+                    <!-- job single -->
+                    <div class="single-job-items mb-50">
+                        <div class="job-items">
+                            <div class="company-img company-img-details">
+                                <a href="#"><img src="data:image/jpeg;base64,{{ application.user.profile_pic}}" style="width: 115px; height: 115px;" alt=""></a>
+                            </div>
+                            <div class="job-tittle">
+                                <a href="#">
+                                    <h4>{{ application.user.firstname }} {{ application.user.lastname }}  </h4>
+                                </a>
+                                <ul>
+                                    <li></li>
+                                   <!--{{ application.user.address }}
+                                    <li><i class="fas fa-map-marker-alt"></i></li>
+                                    {{ application.user.email }}
+                                    <li><i class="fa-solid fa-file-contract"></i></li>
+                                    {{ application.user.gender }}--> 
+                               
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                      <!-- job single End -->
+                   
+                    <div class="job-post-details">
+                        <div class="post-details1 mb-50">
+                            <!-- Small Section Tittle -->
+                            <div class="small-section-tittle">
+                                <h4>About Applicant</h4>
+                            </div>
+                            <p>Name: {{ application.user.firstname }} {{ application.user.lastname }}</p>
+                            <p>Email: {{ application.user.email }}</p>
+                            <p>Phone: {{ application.user.phone }}</p>
+                            <p>Address: {{ application.user.address }}</p>
+                        </div>
+                        <div class="post-details2  mb-50">
+                             <!-- Small Section Tittle -->
+                            <div class="small-section-tittle">
+                                <h4>Application Details</h4>
+                            </div>
+                            <p>Applying for :  {{ application.position_applied }}</p>
+                            <p>Application date :  {{ application.application_date }}</p>
+                                
+                        </div>
+                     
+                    </div>
+
+                </div>
+                <!-- Right Content -->
+                <div class="col-xl-4 col-lg-4">
+                    <div class="post-details3  mb-50">
+                        <!-- Small Section Tittle -->
+                       <div class="small-section-tittle">
+                           <h4>Application Status</h4>
+                       </div>
+
+                       <ul>
+                        <li>Applicant Resume:
+                            {% if application.resume %}
+                            <a href="{{ url_for('download_resume', application_id=application.application_id) }}" target="_blank">View Resume</a>
+                            {% else %}
+                                <p>No resume uploaded.</p>
+                            {% endif %}    
+
+                           
+                        </li>
+                        <li>Applicant PESO form
+                            {% if application.requirements %}
+                            <a href="{{ url_for('download_requirements', application_id=application.application_id) }}" target="_blank">View Requirements</a>
+                        {% else %}
+                            <p>No requirements document uploaded.</p>
+                        {% endif %}
+                        </li>
+                        <li>
+                           <bold>Application Status:</bold>  {{ application.application_status }} 
+                           
+
+                        </li>
+                        <li>{% if applicant.workStatus == "Approved" %}
+                            <strong style="color: royalblue; margin-left: 72px; font-size: 20px; font-weight: bold;">
+                                Approved by PESO
+                            </strong>
+                            
+                            {% else %}
+                                
+                            {% endif %}
+                        </li>
+                    </ul>
+                    
+                    <div class="apply-button-group">
+                        <button type="button" class="genric-btn primary" data-toggle="modal" data-target="#applyModal">
+                            Update Status
+                        </button>
+                        <div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="applyModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="applyModalLabel">Update Application Status</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Form for applying -->
+                                        <form id="statusForm" action="/update_application_status" method="POST" enctype="multipart/form-data">
+                                            <input type="hidden" name="application_id" value="{{ application.application_id }}">
+                                            <div class="form-group">
+                                                <label for="status">Select Status:</label><br>
+                                                
+                                                <!-- Section 1: Application Status -->
+                                                <div class="status-section">
+                                                    <input type="radio" id="approved" name="status" value="Approved" {% if application.application_status == 'Approved' %}checked{% endif %}>
+                                                    <label for="approved">Approved</label><br>
+                                                    <input type="radio" id="under_review" name="status" value="Under Review" {% if application.application_status == 'Under Review' %}checked{% endif %}>
+                                                    <label for="under_review">Under Review</label><br>
+                                                    <input type="radio" id="rejected" name="status" value="Rejected" {% if application.application_status == 'Rejected' %}checked{% endif %}>
+                                                    <label for="rejected">Rejected</label><br>
+                                                </div>
+
+                                                <div class="col-sm-6" style="margin-left: -17px !important;">
+                                                    <input style="border: 1px solid #ccc;" type="text" name="reason" placeholder="{{application.reason}}"
+                                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Reason'" required
+                                                    class="single-input">
+                                                </div>
+                                                
+                                                <!-- Separator -->
+                                                <div class="separator"></div>
+                                                
+                                                <!-- Section 2: Additional Statuses -->
+                                                <div class="additional-status-section">
+                                                    <label for="employment_status">Current Employment Status:</label><br>
+                                                    <input type="radio" id="employment_active" name="employment_status" value="Active" {% if application.employment_status == 'Active' %}checked{% endif %}>
+                                                    <label for="employment_active">Active</label><br>
+                                                    <input type="radio" id="employment_inactive" name="employment_status" value="Inactive" {% if application.employment_status == 'Inactive' %}checked{% endif %}>
+                                                    <label for="employment_inactive">Inactive</label><br>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Inline CSS for styling -->
+                                            <style>
+                                                .separator {
+                                                    border-bottom: 2px solid blue;
+                                                    margin: 10px 0;
+                                                }
+                                                
+                                                .status-section, .additional-status-section {
+                                                    margin-bottom: 15px;
+                                                }
+                                            </style>
+                                            
+                                            <button type="submit" id="submitBtn" class="genric-btn primary float-right">Submit</button>
+                                        </form>
+                                        
+                                        
+                                        
+                                        <!-- SweetAlert2 script -->
+                                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    
+                                        <script>
+                                            document.getElementById('submitBtn').addEventListener('click', function (e) {
+                                                e.preventDefault();  // Prevent the form from submitting immediately
+                    
+                                                // Get the selected status
+                                                const selectedStatus = document.querySelector('input[name="status"]:checked');
+                    
+                                                if (!selectedStatus) {
+                                                    Swal.fire({
+                                                        icon: 'warning',
+                                                        title: 'No status selected',
+                                                        text: 'Please select a status before submitting.',
+                                                        backdrop: true,  // Ensures the modal stays on top of everything
+                                                        customClass: {
+                                                            popup: 'swal2-popup-custom'  // Additional custom class for styling if needed
+                                                        }
+                                                    });
+                                                    return;
+                                                }
+                    
+                                                // Show SweetAlert2 confirmation on top
+                                                Swal.fire({
+                                                    title: 'Are you sure?',
+                                                    text: `You are about to update the application status to "${selectedStatus.value}".`,
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#3085d6',
+                                                    cancelButtonColor: '#d33',
+                                                    confirmButtonText: 'Yes, submit it!',
+                                                    backdrop: true,  // Dark backdrop to ensure focus on modal
+                                                    customClass: {
+                                                        popup: 'swal2-popup-custom'  // Ensure a custom class in case of styling conflicts
+                                                    }
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        // Submit the form if confirmed
+                                                        document.getElementById('statusForm').submit();
+                                                    }
+                                                });
+                                            });
+                                        </script>
+                    
+                                        <!-- Optional custom styles for ensuring SweetAlert2 on top -->
+                                        <style>
+                                            /* SweetAlert2 Custom Popup */
+                                            .swal2-popup-custom {
+                                                z-index: 1060 !important; /* Highest z-index for SweetAlert2 */
+                                            }
+                    
+                                            /* Adjust backdrop z-index */
+                                            .swal2-backdrop-show {
+                                                background: rgba(0, 0, 0, 0.8) !important; /* Make the backdrop slightly darker */
+                                                z-index: 1059 !important; /* Ensure it's above the modal backdrop */
+                                            }
+                    
+                                            /* Ensure modal content stays interactive and behind SweetAlert2 */
+                                            .modal {
+                                                z-index: 1040 !important; /* Lower z-index than SweetAlert2 */
+                                            }
+                    
+                                            /* Ensure modal content is interactive */
+                                            .modal-content {
+                                                position: relative;
+                                                z-index: 1045; /* Radio buttons will remain clickable */
+                                            }
+                    
+                                            /* Ensure Bootstrap modal backdrop stays behind the modal content */
+                                            .modal-backdrop {
+                                                z-index: 1035 !important;
+                                            }
+                                        </style>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                  
+                   </div>
+                    <!-- <div class="post-details4  mb-50">
+                
+                       <div class="small-section-tittle">
+                           <h4>Company Information</h4>
+                       </div>
+                          <span>Colorlib</span>
+                          <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+                        <ul>
+                            <li>Name: <span>Colorlib </span></li>
+                            <li>Web : <span> colorlib.com</span></li>
+                            <li>Email: <span>carrier.colorlib@gmail.com</span></li>
+                        </ul>
+                   </div>  -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- job post company End -->
+    
+
+</main>
+<footer>
+    <!-- Footer Start-->
+    <div class="footer-area footer-bg" style="padding-top: 50px;">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+               
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-tittle">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li>
+                                <p>Address :Your address goes
+                                    here, your demo address.</p>
+                                </li>
+                                <li><a href="#">Phone : 09216170786</a></li>
+                                <li><a href="#">Email : pesopila@gmail.com</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+           
+            </div>
+           <!--  -->
+    
+        </div>
+    </div>
+    <!-- footer-bottom area -->
+    <div class="footer-bottom-area footer-bg">
+        <div class="container">
+            <div class="footer-border">
+                 <div class="row d-flex justify-content-between align-items-center">
+                     <div class="col-xl-10 col-lg-10 ">
+                         <div class="footer-copy-right">
+                             <p>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+</p>
+                         </div>
+                     </div>
+                     <div class="col-xl-2 col-lg-2">
+                         <div class="footer-social f-right">
+                             <a href="#"><i class="fab fa-facebook-f"></i></a>
+                             <a href="#"><i class="fab fa-twitter"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End-->
+</footer>
+
+<!-- JS here -->
+
+    <!-- All JS Custom Plugins Link Here here -->
+    <script src="{{ url_for('static', filename='assets/js/vendor/modernizr-3.5.0.min.js') }}"></script>
+    <!-- Jquery, Popper, Bootstrap -->
+    <script src="{{ url_for('static', filename='assets/js/vendor/jquery-1.12.4.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
+    <!-- Jquery Mobile Menu -->
+    <script src="{{ url_for('static', filename='assets/js/jquery.slicknav.min.js') }}"></script>
+    
+    <!-- Jquery Slick, Owl-Carousel Plugins -->
+    <script src="{{ url_for('static', filename='assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/slick.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/price_rangs.js') }}"></script>
+    
+    <!-- One Page, Animated-HeadLin -->
+    <script src="{{ url_for('static', filename='assets/js/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/animated.headline.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.magnific-popup.js') }}"></script>
+    
+    <!-- Scrollup, nice-select, sticky -->
+    <script src="{{ url_for('static', filename='assets/js/jquery.scrollUp.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.nice-select.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.sticky.js') }}"></script>
+    
+    <!-- Contact js -->
+    <script src="{{ url_for('static', filename='assets/js/contact.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.form.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.validate.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/mail-script.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/jquery.ajaxchimp.min.js') }}"></script>
+    
+    <!-- Jquery Plugins, main Jquery -->
+    <script src="{{ url_for('static', filename='assets/js/plugins.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
+    
+    
+</body>
+{% endblock %}

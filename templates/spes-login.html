@@ -1,0 +1,119 @@
+{% extends 'spes-base.html' %}
+
+{% block content %}
+<script src="static/admin_assets/vendor/js/helpers.js"></script>
+
+<!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+<!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+<script src="static/admin_assets/js/config.js"></script>
+<style>.error-message {
+  color: red;
+  align-items: center;
+}
+.error {
+  border: 1px solid red;
+}</style>
+  <body>
+    <!-- Content -->
+
+    <div class="container-xxl">
+      <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+          <!-- Register -->
+          <div class="card">
+            <div class="card-body">
+              <!-- Logo -->
+              <div class="app-brand justify-content-center">
+
+                  <span class="app-brand-text demo text-body fw-bolder">PilaHunt SPES</span>
+                </a>
+              </div>
+              <!-- /Logo -->
+              <h4 class="mb-2">Welcome to SPES! 👋</h4>
+
+              <form id="formAuthentication" class="mb-3" action="/spes_login" method="post">
+                <div class="mb-3">
+                  <label for="spes_email" class="form-label">Email</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="spes_email"
+                    name="spes_email"
+                    placeholder="Enter your email or username"
+                    autofocus
+                  />
+                </div>
+                <div class="mb-3 form-password-toggle">
+                  <div class="d-flex justify-content-between">
+                    <label class="form-label" for="password">Password</label>
+                    <a href="auth-forgot-password-basic.html">
+                      <small>Forgot Password?</small>
+                    </a>
+                  </div>
+                  <div class="input-group input-group-merge">
+                    <input
+                      type="password"
+                      id="spes_password"
+                      class="form-control"
+                      name="spes_password"
+                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                      aria-describedby="spes_password"
+                    />
+                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                  </div>
+                </div> {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% set latest_message = messages[-1] %}
+                        <div class="alert alert-{{ latest_message[0] }}">
+                            {{ latest_message[1] }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="mb-3">
+                  <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+                 
+                </div>
+                
+              </form>
+
+              <p class="text-center">
+                <span>New on our platform?</span>
+                <a href="/spes_register">
+                  <span>Create an account</span>
+                </a>
+              </p>
+            </div>
+          </div>
+          <!-- /Register -->
+        </div>
+      </div>
+    </div>
+
+    <!-- / Content -->
+
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="../assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+
+    <!-- Main JS -->
+    <script src="../assets/js/main.js"></script>
+
+    <!-- Page JS -->
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>
+{% endblock %}

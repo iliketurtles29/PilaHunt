@@ -1,0 +1,214 @@
+{% extends 'header_base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="static/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="static/assets/css/flaticon.css">
+    <link rel="stylesheet" href="static/assets/css/price_rangs.css">
+    <link rel="stylesheet" href="static/assets/css/slicknav.css">
+    <link rel="stylesheet" href="static/assets/css/animate.min.css">
+    <link rel="stylesheet" href="static/assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="static/assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="static/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="static/assets/css/slick.css">
+    <link rel="stylesheet" href="static/assets/css/nice-select.css">
+    <link rel="stylesheet" href="static/assets/css/style.css">
+    
+<main>
+<div class="slider-area ">
+        <div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="assets/img/icon/job-list1.png">
+            <a href="#"><img src="assets/img/icon/job-list1.png" alt=""></a>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="hero-cap text-center">
+                            <h2>Post job hiring</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ================ contact section start ================= -->
+    <section class="contact-section">
+            <div class="container">
+    
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="contact-title">Add Job</h2>
+                    </div>
+                    <div class="col-lg-30">
+                        <form class="form-contact contact_form" action="contact_process.php" method="post" id="contactForm" novalidate="novalidate">
+                            <div class="row" style="max-width: fit-content;">
+
+                                <div class="col-sm-6" >
+                                    <label for="job_title"  >Job title</label>
+                                    <input style=" border: 1px solid #ccc;"type="text" name="job_title" placeholder="Enter Job Name"
+                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Job title'" required
+                                        class="single-input">
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label for="company_name"  >Company Name</label>
+                                    <input style=" border: 1px solid #ccc;" type="text" name="company_name" placeholder="Enter Company name"
+                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Company name'" required
+                                        class="single-input">
+                                </div>
+
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="about_company"  >About Company</label>
+                                    <input style=" border: 1px solid #ccc;" type="text" name="about_company" placeholder="Enter About Company"
+                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'About Company'" required
+                                        class="single-input">
+                                </div>
+
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="company_logo"  >Company Logo</label>
+                                    <input style=" border: 1px solid #ccc;"type="file" accept="image/*" name="company_logo" placeholder="Company Logo"
+									onfocus="this.placeholder = ''" onblur="this.placeholder = 'Last Name'" required
+									class="single-input">
+                                </div>
+
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="company_logo"  >Job Address</label>
+                                    <input style=" border: 1px solid #ccc;" type="text" name="" placeholder="Enter Address"
+									onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Address'" required
+									class="single-input">
+                                </div>
+
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="description"  >Job Description</label>
+                                    <input style=" border: 1px solid #ccc;" type="text" name="" placeholder="Enter Job Description"
+									onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Job Description'" required
+									class="single-input">
+                                </div>
+
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="rangemax"  >Minumun Salary Range</label>
+                                    <input style=" border: 1px solid #ccc;" type="number" name="" placeholder="Enter Minumun Salary Range"
+									onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Minumun Salary Range'" required
+									class="single-input">
+                                </div>
+
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="rangemax"  >Maximum Salary Range</label>
+                                    <input style=" border: 1px solid #ccc;" type="number" name="" placeholder="Enter Maximum Salary Range"
+									onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Maximum Salary Range'" required
+									class="single-input">
+                                </div>
+
+                                <div class="col-sm-6" style="margin-top: 20px;">
+                                    <label for="status">Job Status</label>
+                                    <select name="status" style="border: 1px solid #ccc !important; display: block; width: 100%; height: 40px;" class="single-input" required>
+                                        <option value="" disabled selected>Select Job Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                    
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-3" style="text-align: right;">
+                                <button type="submit" class="button button-contactForm boxed-btn">Submit</button>
+                            </div>
+                            
+
+                        </form>
+                    </div>
+                   
+                </div>
+            </div>
+        </section>
+    <!-- ================ contact section end ================= -->
+    <footer>
+        <!-- Footer Start-->
+        <div class="footer-area footer-bg" style="padding-top: 50px;">
+            <div class="container">
+                <div class="row d-flex justify-content-between">
+                   
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                        <div class="single-footer-caption mb-50">
+                            <div class="footer-tittle">
+                                <h4>Contact Info</h4>
+                                <ul>
+                                    <li>
+                                    <p>Address :Your address goes
+                                        here, your demo address.</p>
+                                    </li>
+                                    <li><a href="#">Phone : 09216170786</a></li>
+                                    <li><a href="#">Email : pesopila@gmail.com</a></li>
+                                </ul>
+                            </div>
+    
+                        </div>
+                    </div>
+               
+                </div>
+               <!--  -->
+        
+            </div>
+        </div>
+        <!-- footer-bottom area -->
+        <div class="footer-bottom-area footer-bg">
+            <div class="container">
+                <div class="footer-border">
+                     <div class="row d-flex justify-content-between align-items-center">
+                         <div class="col-xl-10 col-lg-10 ">
+                             <div class="footer-copy-right">
+                                 <p>
+    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+    </p>
+                             </div>
+                         </div>
+                         <div class="col-xl-2 col-lg-2">
+                             <div class="footer-social f-right">
+                                 <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                 <a href="#"><i class="fab fa-twitter"></i></a>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End-->
+    </footer>
+
+<!-- JS here -->
+	
+		<!-- All JS Custom Plugins Link Here here -->
+        <script src="static/assets/js/vendor/modernizr-3.5.0.min.js"></script>
+        <!-- Jquery, Popper, Bootstrap -->
+        <script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script>
+        <script src="static/assets/js/popper.min.js"></script>
+        <script src="static/assets/js/bootstrap.min.js"></script>
+        <!-- Jquery Mobile Menu -->
+        <script src="static/assets/js/jquery.slicknav.min.js"></script>
+    
+        <!-- Jquery Slick , Owl-Carousel Plugins -->
+        <script src="static/assets/js/owl.carousel.min.js"></script>
+        <script src="static/assets/js/slick.min.js"></script>
+        <script src="static/assets/js/price_rangs.js"></script>
+        
+        <!-- One Page, Animated-HeadLin -->
+        <script src="static/assets/js/wow.min.js"></script>
+        <script src="static/assets/js/animated.headline.js"></script>
+        <script src="static/assets/js/jquery.magnific-popup.js"></script>
+    
+        <!-- Scrollup, nice-select, sticky -->
+        <script src="static/assets/js/jquery.scrollUp.min.js"></script>
+        <script src="static/assets/js/jquery.nice-select.min.js"></script>
+        <script src="static/assets/js/jquery.sticky.js"></script>
+        
+        <!-- contact js -->
+        <script src="static/assets/js/contact.js"></script>
+        <script src="static/assets/js/jquery.form.js"></script>
+        <script src="static/assets/js/jquery.validate.min.js"></script>
+        <script src="static/assets/js/mail-script.js"></script>
+        <script src="static/assets/js/jquery.ajaxchimp.min.js"></script>
+        
+        <!-- Jquery Plugins, main Jquery -->	
+        <script src="static/assets/js/plugins.js"></script>
+        <script src="static/assets/js/main.js"></script>
+    </main>
+
+{% endblock %}

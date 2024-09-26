@@ -1,0 +1,257 @@
+{% extends 'header_base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="static/admin_assets/vendor/css/core.css" class="template-customizer-core-css" />
+<link rel="stylesheet" href="static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'error' %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                        <strong>Error:</strong> {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% elif category == 'success' %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="font-size: 14px;">
+                        <strong>Success:</strong> {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+<main>
+
+    <div class="support-company-area fix section-padding">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-6 col-lg-6">
+                    <div class="right-caption">
+                        <!-- Section Tittle -->
+                        <div class="section-tittle section-tittle2">
+                            <span>What is the PESO</span>
+                            <h2>PESO</h2>
+                        </div>
+                        <div class="support-caption">
+                            <p class="pera-top">The Public Employment Service Office (PESO) is a non-fee charging multi-employment service facility or entity established or accredited pursuant to Republic Act No. 8759, otherwise known as the PESO Act of 1999.</p>
+                            <p>The Act provides that in order to carry out full employment and equality of employment opportunities for all, and to strengthen and expand the existing employment facilitation service machinery of the government particularly at the local levels, there shall be established in all capital towns of provinces, key cities, and other strategic areas a Public Employment Service Office.</p>
+                         
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="support-location-img">
+                        <img src="static/assets/img/about.jpg" alt="">
+                        <div class="support-img-cap text-center">
+                            <p>Since</p>
+                            <span>1999</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Support Company End-->
+    <!-- How  Apply Process Start-->
+    <div class="apply-process-area apply-bg pt-150 pb-150" data-background="static/assets/img/gallery/how-applybg.png">
+        <div class="container">
+            <!-- Section Tittle -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-tittle white-text text-center">
+                        <span>Apply process</span>
+                        <h2> How it works</h2>
+                    </div>
+                </div>
+            </div>
+            <!-- Apply Process Caption -->
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-process text-center mb-30">
+                        <div class="process-ion">
+                            <span class="flaticon-search"></span>
+                        </div>
+                        <div class="process-cap">
+                            <h5>1. Search a job</h5>
+                        <p>Find job opportunities that match your skills and interests. Browse listings to discover the best roles available and learn more about each position.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-process text-center mb-30">
+                        <div class="process-ion">
+                            <span class="flaticon-curriculum-vitae"></span>
+                        </div>
+                        <div class="process-cap">
+                            <h5>2. Apply for job</h5>
+                        <p>Submit your application for the positions you’re interested in. Follow the instructions to provide your resume and other necessary documents to potential employers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single-process text-center mb-30">
+                        <div class="process-ion">
+                            <span class="flaticon-tour"></span>
+                        </div>
+                        <div class="process-cap">
+                            <h5>3. Get your job</h5>
+                        <p>After applying, stay updated on your application status. Prepare for interviews and follow up as needed to secure your new role. ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- How  Apply Process End-->
+ 
+
+    <!-- Blog Area Start -->
+    <div class="home-blog-area blog-h-padding">
+        <div class="container">
+            <!-- Section Tittle -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-tittle text-center">
+                        <span>Our latest blog</span>
+                        <h2>Our recent news</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6">
+                    <div class="home-blog-single mb-30">
+                        <div class="blog-img-cap">
+                            <div class="blog-img">
+                                <img src="assets/img/blog/home-blog1.jpg" alt="">
+                                <!-- Blog date -->
+                                <div class="blog-date text-center">
+                                    <span>24</span>
+                                    <p>Now</p>
+                                </div>
+                            </div>
+                            <div class="blog-cap">
+                                <p>|   Properties</p>
+                                <h3><a href="single-blog.html">Footprints in Time is perfect House in Kurashiki</a></h3>
+                                <a href="#" class="more-btn">Read more »</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6">
+                    <div class="home-blog-single mb-30">
+                        <div class="blog-img-cap">
+                            <div class="blog-img">
+                                <img src="assets/img/blog/home-blog2.jpg" alt="">
+                                <!-- Blog date -->
+                                <div class="blog-date text-center">
+                                    <span>24</span>
+                                    <p>Now</p>
+                                </div>
+                            </div>
+                            <div class="blog-cap">
+                                <p>|   Properties</p>
+                                <h3><a href="single-blog.html">Footprints in Time is perfect House in Kurashiki</a></h3>
+                                <a href="#" class="more-btn">Read more »</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Blog Area End -->
+
+</main>
+<footer>
+    <!-- Footer Start-->
+    <div class="footer-area footer-bg" style="padding-top: 50px;">
+        <div class="container">
+            <div class="row d-flex justify-content-between">
+               
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                    <div class="single-footer-caption mb-50">
+                        <div class="footer-tittle">
+                            <h4>Contact Info</h4>
+                            <ul>
+                                <li>
+                                <p>Address :Your address goes
+                                    here, your demo address.</p>
+                                </li>
+                                <li><a href="#">Phone : 09216170786</a></li>
+                                <li><a href="#">Email : pesopila@gmail.com</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+           
+            </div>
+           <!--  -->
+    
+        </div>
+    </div>
+    <!-- footer-bottom area -->
+    <div class="footer-bottom-area footer-bg">
+        <div class="container">
+            <div class="footer-border">
+                 <div class="row d-flex justify-content-between align-items-center">
+                     <div class="col-xl-10 col-lg-10 ">
+                         <div class="footer-copy-right">
+                             <p>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a  target="">AW012</a>
+</p>
+                         </div>
+                     </div>
+                     <div class="col-xl-2 col-lg-2">
+                         <div class="footer-social f-right">
+                             <a href="#"><i class="fab fa-facebook-f"></i></a>
+                             <a href="#"><i class="fab fa-twitter"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End-->
+</footer>
+
+
+<script src="static/assets/js/vendor/modernizr-3.5.0.min.js"></script>
+<!-- Jquery, Popper, Bootstrap -->
+<script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script>
+<script src="static/assets/js/popper.min.js"></script>
+<script src="static/assets/js/bootstrap.min.js"></script>
+<!-- Jquery Mobile Menu -->
+<script src="static/assets/js/jquery.slicknav.min.js"></script>
+
+<!-- Jquery Slick , Owl-Carousel Plugins -->
+<script src="static/assets/js/owl.carousel.min.js"></script>
+<script src="static/assets/js/slick.min.js"></script>
+<script src="static/assets/js/price_rangs.js"></script>
+
+<!-- One Page, Animated-HeadLin -->
+<script src="static/assets/js/wow.min.js"></script>
+<script src="static/assets/js/animated.headline.js"></script>
+<script src="static/assets/js/jquery.magnific-popup.js"></script>
+
+<!-- Scrollup, nice-select, sticky -->
+<script src="static/assets/js/jquery.scrollUp.min.js"></script>
+<script src="static/assets/js/jquery.nice-select.min.js"></script>
+<script src="static/assets/js/jquery.sticky.js"></script>
+
+<!-- contact js -->
+<script src="static/assets/js/contact.js"></script>
+<script src="static/assets/js/jquery.form.js"></script>
+<script src="static/assets/js/jquery.validate.min.js"></script>
+<script src="static/assets/js/mail-script.js"></script>
+<script src="static/assets/js/jquery.ajaxchimp.min.js"></script>
+
+<!-- Jquery Plugins, main Jquery -->	
+<script src="static/assets/js/plugins.js"></script>
+<script src="static/assets/js/main.js"></script>
+{% endblock %}

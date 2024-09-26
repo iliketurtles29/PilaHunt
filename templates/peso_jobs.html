@@ -1,0 +1,589 @@
+{% extends 'peso_base.html' %}
+
+{% block content %}
+<style>
+  /* Initial iframe size */
+
+.swal2-container {
+z-index: 2060; /* Adjust the z-index value as needed */
+
+.loader {
+border: 4px solid #f3f3f3; /* Light grey */
+border-top: 4px solid #3498db; /* Blue */
+border-radius: 50%;
+width: 30px;
+height: 30px;
+animation: spin 2s linear infinite;
+position: fixed;
+top: 50%;
+left: 50%;
+margin-top: -15px; /* Half of width */
+margin-left: -15px; /* Half of height */
+z-index: 9999; /* Make sure it appears above everything */
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+}
+
+
+</style>
+<script src="static/admin_assets/vendor/js/helpers.js"></script>
+<link rel="stylesheet" href="static/sweetalert2.min.css">
+  <body>
+    <script src="static/sweetalert2@11.js"></script>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
+
+        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+          <div class="app-brand demo">
+            <a href="/peso_dashboard" class="app-brand-link">
+              <span class="app-brand-text demo menu-text fw-bolder ms-2">PilaHunt</span>
+            </a>
+
+            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+              <i class="bx bx-chevron-left bx-sm align-middle"></i>
+            </a>
+          </div>
+
+          <div class="menu-inner-shadow"></div>
+
+          <ul class="menu-inner py-1">
+            <!-- Dashboard -->
+            <li class="menu-item">
+              <a href="/peso_dashboard" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+              </a>
+            </li>
+
+            <li class="menu-item">
+              <a href="/applicant_lists" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-user"></i>
+                <div data-i18n="Tables">Applicants</div>
+              </a>
+            </li>
+  
+            <li class="menu-item active open">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-store"></i>
+                <div data-i18n="Form Elements">Employers</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="/employer_list" class="menu-link">
+                    <div data-i18n="Basic Inputs">Employer Lists</div>
+                  </a>
+                </li>
+                <li class="menu-item active open">
+                    <a href="/peso_jobs" class="menu-link">
+                      <div data-i18n="Basic Inputs">Jobs</div>
+                    </a>
+                  </li>
+                <li class="menu-item">
+                  <a href="/approval_request" class="menu-link">
+                    <div data-i18n="Input groups">Approval Requests</div>
+                  </a>
+                </li>
+                  <li class="menu-item ">
+                    <a href="/rejected_request" class="menu-link">
+                      <div data-i18n="Input groups">Rejected Requests</div>
+                    </a>
+                  </li>
+                  
+              </ul>
+            </li>   
+
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-detail"></i>
+                <div data-i18n="Form Layouts">SPES</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="/spes_members" class="menu-link">
+                    <div data-i18n="Vertical Form">SPES Members</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="/spes_applicants" class="menu-link">
+                    <div data-i18n="Horizontal Form">SPES Applicants </div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="/peso_tasks" class="menu-link">
+                    <div data-i18n="Horizontal Form">SPES Task Lists</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <!-- Tables -->
+         
+           
+        </aside>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
+
+          <nav
+            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+            id="layout-navbar"
+          >
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                <i class="bx bx-menu bx-sm"></i>
+              </a>
+            </div>
+
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <!-- Search -->
+              <div class="navbar-nav align-items-center">
+                <div class="nav-item d-flex align-items-center">
+                  <i class="bx bx-search fs-4 lh-0"></i>
+                  <input
+                    type="text"
+                    class="form-control border-0 shadow-none"
+                    placeholder="Search..."
+                    aria-label="Search..."
+                    id="searchInput"
+                    onkeyup="searchTable()"
+                  />
+                </div>
+              </div>
+              <!-- /Search -->
+              <script>   
+                function searchTable() {
+                var input, filter, table, rows, cells, match;
+                input = document.getElementById("searchInput");
+                filter = input.value.toLowerCase();
+                table = document.getElementById("applicantTable");
+                rows = table.getElementsByTagName("tr");
+              
+                for (var i = 0; i < rows.length; i++) {
+                  cells = rows[i].getElementsByTagName("td");
+                  match = false;
+                  
+                  for (var j = 0; j < cells.length; j++) {
+                    if (cells[j]) {
+                      if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                        match = true;
+                        break;
+                      }
+                    }
+                  }
+              
+                  if (match) {
+                    rows[i].style.display = "";
+                  } else {
+                    rows[i].style.display = "none";
+                  }
+                }
+              }
+            </script>
+
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <!-- Place this tag where you want the button to render. -->
+                <li class="nav-item lh-1 me-3">
+
+                </li>
+
+                <!-- User -->
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online">
+                      <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                    </div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+                              <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                            </div>
+                          </div>
+                          <div class="flex-grow-1">
+                            <span class="fw-semibold d-block">John Doe</span>
+                            <small class="text-muted">Admin</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <i class="bx bx-user me-2"></i>
+                        <span class="align-middle">My Profile</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <i class="bx bx-cog me-2"></i>
+                        <span class="align-middle">Settings</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <span class="d-flex align-items-center align-middle">
+                          <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
+                          <span class="flex-grow-1 align-middle">Billing</span>
+                          <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="auth-login-basic.html">
+                        <i class="bx bx-power-off me-2"></i>
+                        <span class="align-middle">Log Out</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ User -->
+              </ul>
+            </div>
+          </nav>
+
+          <!-- / Navbar -->
+
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+            <div class="container-xxl flex-grow-1 container-p-y">
+                <div class="card">
+                    <h5 class="card-header">Job Lists</h5>
+                    <div class="table-responsive text-nowrap">
+                      
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Company Name</th>
+                                    <th>Salary Range</th>
+                                    <th>Job Type</th>
+                                    <th>Job Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0" id="jobsTable">
+                                {% for job in jobs %}
+                                <tr data-job-id="{{ job.id }}"
+                                    data-job-title="{{ job.job_title }}"
+                                    data-company-name="{{ job.company_name }}"
+                                    data-salary-range="{{ job.salary_range_min }} - {{ job.salary_range_max }}"
+                                    data-job-type="{{ job.job_type }}"
+                                    data-contact-person="{{ job.contact_person }}"
+                                    data-phone-no="{{ job.phone_no }}"
+                                    data-email-address="{{ job.email_add }}"
+                                    data-job-benefits="{{ job.job_benefits }}"
+                                    data-job-address="{{ job.job_address }}"
+                                    data-job-requirements="{{ job.job_requirements }}"
+                                    data-job-requirementdocu="{{ job.job_requirementdocu }}">
+                                    <td>{{ job.job_title }}</td>
+                                    <td>{{ job.company_name }}</td>
+                                    <td>{{ job.salary_range_min }} - {{ job.salary_range_max }}</td>
+                                    <td>{{ job.job_type }}</td>
+                                    <td>  {% if job.job_status == 'active' %}
+                                        <span class="badge me-1 bg-label-success">Active</span>
+                                    {% else %}
+                                        <span class="badge me-1 bg-label-danger">Inactive</span>
+                                    {% endif %} </td>
+                                    <td>
+                                        <button 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#exLargeModal" 
+                                            type="button" 
+                                            class="btn btn-primary view-details">
+                                            View Details
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    
+                        <!-- Modal -->
+                        <div class="modal fade" id="exLargeModal" tabindex="-1" aria-labelledby="exLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable modal-xl modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exLargeModalLabel">Job Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <!-- Row 1: 3 Columns -->
+                                            <div class="col-md-4">
+                                                <!-- Job Title -->
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="job-title">Job Title</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="job-title-icon" class="input-group-text"><i class="bx bx-briefcase"></i></span>
+                                                        <input 
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="job-title"
+                                                            disabled
+                                                            aria-describedby="job-title-icon"
+                                                        />
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Company Name -->
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="company-name">Company Name</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="company-name-icon" class="input-group-text"><i class="bx bx-building"></i></span>
+                                                        <input
+                                                            type="text"
+                                                            id="company-name"
+                                                            class="form-control"
+                                                            disabled
+                                                            aria-describedby="company-name-icon"
+                                                        />
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Salary Range -->
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="salary-range">Salary Range</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="salary-range-icon" class="input-group-text"><i class="bx bx-dollar"></i></span>
+                                                        <input
+                                                            type="text"
+                                                            id="salary-range"
+                                                            class="form-control"
+                                                            disabled
+                                                            aria-describedby="salary-range-icon"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                        
+                                            <!-- Row 1: 3 Columns -->
+                                            <div class="col-md-4">
+                                                <!-- Job Type -->
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="job-type">Job Type</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="job-type-icon" class="input-group-text"><i class="bx bx-cog"></i></span>
+                                                        <input
+                                                            type="text"
+                                                            id="job-type"
+                                                            class="form-control"
+                                                            disabled
+                                                            aria-describedby="job-type-icon"
+                                                        />
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Contact Person -->
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="contact-person">Contact Person</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="contact-person-icon" class="input-group-text"><i class="bx bx-user"></i></span>
+                                                        <input
+                                                            type="text"
+                                                            id="contact-person"
+                                                            class="form-control"
+                                                            disabled
+                                                            aria-describedby="contact-person-icon"
+                                                        />
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Phone No -->
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="phone-no">Phone Number</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="phone-no-icon" class="input-group-text"><i class="bx bx-phone"></i></span>
+                                                        <input
+                                                            type="text"
+                                                            id="phone-no"
+                                                            class="form-control"
+                                                            disabled
+                                                            aria-describedby="phone-no-icon"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                        
+                                            <!-- Row 1: 3 Columns -->
+                                            <div class="col-md-4">
+                                                <!-- Email Address -->
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="email-address">Email Address</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="email-address-icon" class="input-group-text"><i class="bx bx-envelope"></i></span>
+                                                        <input
+                                                            type="text"
+                                                            id="email-address"
+                                                            class="form-control"
+                                                            disabled
+                                                            aria-describedby="email-address-icon"
+                                                        />
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Job Benefits -->
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="job-benefits">Job Benefits</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="job-benefits-icon" class="input-group-text"><i class="bx bx-gift"></i></span>
+                                                        <input
+                                                            type="text"
+                                                            id="job-benefits"
+                                                            class="form-control"
+                                                            disabled
+                                                            aria-describedby="job-benefits-icon"
+                                                        />
+                                                    </div>
+                                                </div>
+                        
+                                                <!-- Job Address -->
+                                                <div class="mb-2">
+                                                    <label class="form-label" for="job-address">Job Address</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <span id="job-address-icon" class="input-group-text"><i class="bx bx-map"></i></span>
+                                                        <input
+                                                            type="text"
+                                                            id="job-address"
+                                                            class="form-control"
+                                                            disabled
+                                                            aria-describedby="job-address-icon"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <!-- Status -->
+
+                                        <hr>
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" id="update-button" class="btn btn-primary">Update Status</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const tableRows = document.querySelectorAll('#jobsTable tr');
+                                const jobTitleInput = document.getElementById('job-title');
+                                const companyNameInput = document.getElementById('company-name');
+                                const salaryRangeInput = document.getElementById('salary-range');
+                                const jobTypeInput = document.getElementById('job-type');
+                                const contactPersonInput = document.getElementById('contact-person');
+                                const phoneNoInput = document.getElementById('phone-no');
+                                const emailAddressInput = document.getElementById('email-address');
+                                const jobBenefitsInput = document.getElementById('job-benefits');
+                                const jobAddressInput = document.getElementById('job-address');
+                                const jobRequirementsInput = document.getElementById('job-requirements');
+                                const jobRequirementDocuInput = document.getElementById('job-requirementdocu');
+                    
+                                tableRows.forEach(row => {
+                                    row.addEventListener('click', function () {
+                                        const jobTitle = row.getAttribute('data-job-title');
+                                        const companyName = row.getAttribute('data-company-name');
+                                        const salaryRange = row.getAttribute('data-salary-range');
+                                        const jobType = row.getAttribute('data-job-type');
+                                        const contactPerson = row.getAttribute('data-contact-person');
+                                        const phoneNo = row.getAttribute('data-phone-no');
+                                        const emailAddress = row.getAttribute('data-email-address');
+                                        const jobBenefits = row.getAttribute('data-job-benefits');
+                                        const jobAddress = row.getAttribute('data-job-address');
+                                        const jobRequirements = row.getAttribute('data-job-requirements');
+                                        const jobRequirementDocu = row.getAttribute('data-job-requirementdocu');
+                    
+                                        jobTitleInput.value = jobTitle;
+                                        companyNameInput.value = companyName;
+                                        salaryRangeInput.value = salaryRange;
+                                        jobTypeInput.value = jobType;
+                                        contactPersonInput.value = contactPerson;
+                                        phoneNoInput.value = phoneNo;
+                                        emailAddressInput.value = emailAddress;
+                                        jobBenefitsInput.value = jobBenefits;
+                                        jobAddressInput.value = jobAddress;
+                                        jobRequirementsInput.value = jobRequirements;
+                                        jobRequirementDocuInput.value = jobRequirementDocu;
+                                    });
+                                });
+                            });
+                        </script>
+            
+            <!--<script>
+              $(document).ready(function() {
+                  $('#approvalForm').submit(function(event) {
+                      event.preventDefault(); // Prevent the default form submission
+                      
+                      // Serialize the form data
+                      var formData = $(this).serialize();
+                      
+                      // Send an AJAX POST request
+                      $.ajax({
+                          type: 'POST',
+                          url: '/approval_request',
+                          data: formData,
+                          success: function(response) {
+                              // Reload the page after successful submission
+                              location.reload();
+                          },
+                          error: function(xhr, status, error) {
+                              console.error(xhr.responseText);
+                              // Handle error
+                          }
+                      });
+                  });
+              });
+          </script>-->
+
+
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+      </div>
+
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
+
+
+    <script src="static/admin_assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="static/admin_assets/vendor/libs/popper/popper.js"></script>
+    <script src="static/admin_assets/vendor/js/bootstrap.js"></script>
+    <script src="static/admin_assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="static/admin_assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+    <script src="static/admin_assets/js/config.js"></script>
+    <!-- Main JS -->
+    <script src="static/admin_assets/js/main.js"></script>
+
+
+
+    <!-- Page JS -->
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+
+
+  {% endblock %}
